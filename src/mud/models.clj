@@ -17,14 +17,23 @@
 
 (defentity exit (entity-fields :id :from_room :to_room :description))
 
-(defentity player
-           (entity-fields :id :name :description :weapon :hit_points))
-
 (defentity weapon
            (entity-fields :id :name :damage))
 
+(defentity player
+           (entity-fields :id :name :description :hit_points :treasure :armour )
+           (has-one weapon)
+           (has-one room)
+           )
+
+(defn all-players []
+  (select player))
+
 (defn create-room [rm]
   (insert room (values rm)))
+
+(defn create-player [pl]
+  (insert player (values pl)))
 
 (defn create-exit [ex]
   (insert exit (values ex)))

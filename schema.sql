@@ -24,14 +24,6 @@ CREATE TABLE monster (
   hit_points INTEGER NOT NULL
 );
 
-CREATE TABLE player (
-  id INTEGER PRIMARY KEY,
-  weapon_id INTEGER REFERENCES weapon(id) NOT NULL,
-  name TEXT NOT NULL,
-  description TEXT NOT NULL,
-  hit_points INTEGER NOT NULL
-);
-
 CREATE TABLE treasure (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
@@ -52,3 +44,14 @@ INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 1);
 INSERT INTO room (id, description) VALUES (1, "An empty room. Quite boring.");
 INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings everywhere. But you don't notice that because as soon as you walk in a vampire tries to eat you...");
 INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very ordinary door. With a doorknob");
+
+CREATE TABLE player (
+  id INTEGER PRIMARY KEY,
+  weapon_id INTEGER REFERENCES weapon(id) NOT NULL default 1,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  hit_points INTEGER NOT NULL default 5,
+  last_room INTEGER REFERENCES room(id) NOT NULL default 1,
+  treasure INTEGER default 0,
+  armour INTEGER default 0
+);

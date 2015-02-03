@@ -10,7 +10,7 @@
                  [valip "0.2.0"]
                  [ring/ring-defaults "0.1.2"]]
   :plugins [[lein-ring "0.8.13"]]
-  :ring {:handler mud.handler/app}
+  :ring {:handler mud.routes/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}})
