@@ -15,6 +15,8 @@
                 (views/entrance))
            (GET "/player/new" []
                 (views/new-player))
+           (GET "/player/:id" [id] ;;(2)
+                (views/player id))
            (POST "/players" [& params]
                  (views/make-player params))
            )

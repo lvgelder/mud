@@ -45,10 +45,35 @@
     (form-to
       {:class :form-horizontal}
       [:post "/players"]
-      (text-field :name)
-      (text-field :description)
+      [:div
+       "Name: "
+       (text-field :name)
+       ]
+      [:div "Description:"
+       (text-field :description)
+       ]
       (submit-button {:class "btn btn-primary"} "Create Hero"))))
 
 (defn make-player [params]
   (models/create-player params)
+  (let [pl (models/player-by-name (:name params))]
+    (models/initialize-player-room (:id pl) 1)
+    )
   (response/redirect-after-post "/entrance"))
+
+(defn player [id]
+  (let [pl (models/player-by-id id) room (models/room-by-player-id id)]
+    (base-page
+      (str "#" id ": " (:title pl) " - the hero")
+
+      [:h1 "#" id ": " (:title pl)]
+
+      [:p [:strong "player: "] (:name pl)]
+      [:hr]
+
+      [:p "You are in:"]
+      [:p (:description room)]
+      )
+    )
+  )
+

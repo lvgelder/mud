@@ -40,6 +40,11 @@ CREATE TABLE monster_treasure (
   treasure_id INTEGER REFERENCES treasure(id)
 );
 
+CREATE TABLE room_treasure (
+  room_id INTEGER REFERENCES room(id),
+  treasure_id INTEGER REFERENCES treasure(id)
+);
+
 INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 1);
 INSERT INTO room (id, description) VALUES (1, "An empty room. Quite boring.");
 INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings everywhere. But you don't notice that because as soon as you walk in a vampire tries to eat you...");
@@ -51,7 +56,21 @@ CREATE TABLE player (
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   hit_points INTEGER NOT NULL default 5,
-  last_room INTEGER REFERENCES room(id) NOT NULL default 1,
-  treasure INTEGER default 0,
-  armour INTEGER default 0
+  items INTEGER NOT NULL default 0,
+  level INTEGER default 1
+);
+
+CREATE TABLE room_player (
+  room_id INTEGER REFERENCES room(id),
+  player_id INTEGER REFERENCES player(id)
+);
+
+CREATE TABLE player_treasure (
+  treasure_id INTEGER REFERENCES treasure(id),
+  player_id INTEGER REFERENCES player(id)
+);
+
+CREATE TABLE player_monster (
+  monster_id INTEGER REFERENCES monster(id),
+  player_id INTEGER REFERENCES player(id)
 );

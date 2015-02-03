@@ -9,37 +9,74 @@
 (defentity treasure
            (entity-fields :id :name :worth))
 
-(defentity monster
-           (entity-fields :id :name :description :weapon :hit_points) (many-to-many treasure :monster_treasure))
-
-(defentity room
-           (entity-fields :id :description) (many-to-many monster :room_monster))
-
-(defentity exit (entity-fields :id :from_room :to_room :description))
-
 (defentity weapon
            (entity-fields :id :name :damage))
 
-(defentity player
-           (entity-fields :id :name :description :hit_points :treasure :armour )
+(defentity monster
+           (entity-fields :id :name :description :hit_points)
            (has-one weapon)
-           (has-one room)
+           (many-to-many treasure :monster_treasure))
+
+(declare player room)
+
+(defentity room
+           (entity-fields :description)
+           (many-to-many monster :room_monster)
+           (many-to-many treasure :room_treasure)
+           (many-to-many player :room_player))
+
+(defentity player
+           (entity-fields :id :name :description :hit_points )
+           (has-one weapon)
+           (many-to-many room :room_player)
+           (many-to-many treasure :player_treasure)
+           (many-to-many monster :player_monster)
            )
+
+(defentity exit (entity-fields :id :from_room :to_room :description))
+
+(defentity room_player (entity-fields :player_id :room_id))
 
 (defn all-players []
   (select player))
 
 (defn create-room [rm]
-  (insert room (values rm)))
+  (insert room (values rm))
+  )
 
 (defn create-player [pl]
-  (insert player (values pl)))
+  (insert player (values pl))
+  )
+
+(defn initialize-player-room [player_id room_id]
+  (insert room_player
+          (values {:room_id room_id :player_id player_id}))
+  )
+
+(defn set-player-room [player_id room_id]
+  (update room_player
+          (set-fields {:room_id room_id})
+          (where {:player_id player_id}))
+  )
 
 (defn create-exit [ex]
   (insert exit (values ex)))
 
 (defn room-by-id [id]
   (first (select room (where {:id id}))))
+
+(defn player-by-id [id]
+  (first (select player (where {:id id}))))
+
+(defn room-by-player-id [pl_id]
+  (first (select room
+                 (join room_player
+                       (= :room_player.room_id :id))
+                 (where {:room_player.player_id pl_id})
+                 )))
+
+(defn player-by-name [name]
+  (first (select player (where {:name name}))))
 
 (defn exits-by-room [room_id]
   (select exit
