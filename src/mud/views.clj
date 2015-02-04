@@ -1,8 +1,9 @@
 (ns mud.views
   (:require [hiccup.page :refer [html5 include-js include-css]]
-            [hiccup.form :refer [form-to text-field submit-button text-area]]
+            [hiccup.form :refer [form-to text-field submit-button text-area hidden-field]]
             [ring.util.response :as response]
             [mud.models :as models]
+            [mud.brain :as brain]
             ))
 
 
@@ -64,15 +65,51 @@
 (defn player [id]
   (let [pl (models/player-by-id id) room (models/room-by-player-id id)]
     (base-page
-      (str "#" id ": " (:title pl) " - the hero")
+      (str "#" id ": " (:name pl) " - the hero")
 
-      [:h1 "#" id ": " (:title pl)]
-
-      [:p [:strong "player: "] (:name pl)]
+      [:h1 (:name pl)]
       [:hr]
 
       [:p "You are in:"]
       [:p (:description room)]
+
+      (form-to
+        {:class :form-horizontal}
+        [:post "/actions"]
+        [:div
+         (text-field :action)
+         (hidden-field :player_id (:id pl))
+         (hidden-field :room_id (:id room))
+         (submit-button {:class "btn btn-primary"} "What do you want to do?")
+         ]
+        )
+      )
+    )
+  )
+
+(defn action [params]
+  (let [action (brain/action (:player_id params) (:action params) (:room_id params)) pl (models/player-by-id (:player_id params)) room (models/room-by-player-id (:room_id params))]
+    (base-page
+      (str (:name pl) " - the hero")
+
+      [:h1 (:name pl)]
+      [:hr]
+
+      [:p "You are in:"]
+      [:p (:description room)]
+
+      [:p action]
+
+      (form-to
+        {:class :form-horizontal}
+        [:post "/actions"]
+        [:div
+         (text-field :action)
+         (hidden-field :player_id (:id pl))
+         (hidden-field :room_id (:id room))
+         (submit-button {:class "btn btn-primary"} "What do you want to do?")
+         ]
+        )
       )
     )
   )

@@ -20,7 +20,7 @@
 (declare player room)
 
 (defentity room
-           (entity-fields :description)
+           (entity-fields :description :id)
            (many-to-many monster :room_monster)
            (many-to-many treasure :room_treasure)
            (many-to-many player :room_player))

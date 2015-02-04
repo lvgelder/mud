@@ -19,6 +19,9 @@
                 (views/player id))
            (POST "/players" [& params]
                  (views/make-player params))
+           (POST "/actions" [& params]
+                 (views/action params))
+
            )
 
 (def app
