@@ -21,8 +21,7 @@
      [:div {:class "navbar navbar-inverse"}
       [:div {:class :navbar-inner}
        [:a {:class :brand :href "/"} "SUD!"]
-       [:form {:class "navbar-form pull-right"}
-        [:input {:type :text :class :search-query :placeholder :Search}]]]]
+       ]]
 
      [:div.container (seq body)]])) ;;(3)
 
@@ -88,7 +87,7 @@
   )
 
 (defn action [params]
-  (let [action (brain/action (:player_id params) (:action params) (:room_id params)) pl (models/player-by-id (:player_id params)) room (models/room-by-player-id (:room_id params))]
+  (let [action (brain/action (:player_id params) (:action params) (:room_id params)) pl (models/player-by-id (:player_id params)) room (models/room-by-player-id (:player_id params))]
     (base-page
       (str (:name pl) " - the hero")
 
