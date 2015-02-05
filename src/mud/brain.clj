@@ -7,7 +7,7 @@
 
 (defn list-exits [player-id action room-id]
   (let [exits (models/exits-by-room room-id)]
-    (apply str (concat (format "<p>You see %s exits: </p>" (count exits)) (map #(str (:description %)) exits)))
+    (apply str (concat (format "<p>You see %s exits:</p> " (count exits)) (map #(str (:description %)) exits)))
     )
   )
 
