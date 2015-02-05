@@ -14,7 +14,7 @@
       )
 
 (fact "Cant kill the same monster twice"
-      (fight 1 "" 1) => "Nothing to fight"
+      (fight 1 "" 1) => "You already fought the vampire and won. It is lying dead before you..."
       (provided
         (models/monster-by-room 1) => {:id 1 :name "vampire"}
         (models/monsters_killed 1 1) => [{:monster_id 1 :player_id 1}]
