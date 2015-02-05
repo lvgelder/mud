@@ -99,6 +99,11 @@
       [:p "You are in:"]
       [:p (:description room)]
 
+      [:div
+       (for [monster (:monster room)]
+         [:p (str (format "You see a %s with %s" (:name monster) (:description monster))) ]
+         )
+       ]
       [:p action]
 
       (form-to

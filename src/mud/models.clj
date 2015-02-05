@@ -82,6 +82,7 @@
 
 (defn room-by-player-id [pl_id]
   (first (select room
+                 (with monster)
                  (join room_player
                        (= :room_player.room_id :id))
                  (where {:room_player.player_id pl_id})
