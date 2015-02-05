@@ -46,9 +46,12 @@ CREATE TABLE room_treasure (
 );
 
 INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 1);
+INSERT INTO weapon (id, name, damage) VALUES (2, 'teeth', 1);
 INSERT INTO room (id, description) VALUES (1, "An empty room. Quite boring.");
 INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings everywhere. But you don't notice that because as soon as you walk in a vampire tries to eat you...");
 INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very ordinary door. With a doorknob");
+INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
+INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
 
 CREATE TABLE player (
   id INTEGER PRIMARY KEY,

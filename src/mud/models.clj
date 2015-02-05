@@ -12,12 +12,13 @@
 (defentity weapon
            (entity-fields :id :name :damage))
 
+(declare player room)
+
 (defentity monster
            (entity-fields :id :name :description :hit_points)
            (has-one weapon)
-           (many-to-many treasure :monster_treasure))
-
-(declare player room)
+           (many-to-many treasure :monster_treasure)
+           (many-to-many room :room_monster))
 
 (defentity room
            (entity-fields :description :id)
@@ -36,6 +37,13 @@
 (defentity exit (entity-fields :id :from_room :to_room :description))
 
 (defentity room_player (entity-fields :player_id :room_id))
+
+(defentity room_monster (entity-fields :monster_id :room_id))
+
+(defentity player_monster (entity-fields :player_id :monster_id))
+
+(defentity player_treasure (entity-fields :player_id :treasure_id))
+
 
 (defn all-players []
   (select player))
@@ -59,6 +67,10 @@
           (where {:player_id player_id}))
   )
 
+(defn kill-monster [player_id monster_id]
+  (insert player_monster
+          (values {:monster_id monster_id :player_id player_id})))
+
 (defn create-exit [ex]
   (insert exit (values ex)))
 
@@ -66,13 +78,20 @@
   (first (select room (where {:id id}))))
 
 (defn player-by-id [id]
-  (first (select player (where {:id id}))))
+  (first (select player (with treasure) (with monster) (where {:id id}))))
 
 (defn room-by-player-id [pl_id]
   (first (select room
                  (join room_player
                        (= :room_player.room_id :id))
                  (where {:room_player.player_id pl_id})
+                 )))
+
+(defn monster-by-room [room_id]
+  (first (select monster
+                 (join room_monster
+                       (= :room_monster.monster_id :id))
+                 (where {:room_monster.room_id room_id})
                  )))
 
 (defn player-by-name [name]
@@ -82,3 +101,8 @@
   (select exit
           (where {:from_room room_id})
           (order :id)))
+
+(defn monsters_killed [player_id monster_id]
+  (select player_monster
+          (where {:player_id player_id :monster_id monster_id})
+          ))

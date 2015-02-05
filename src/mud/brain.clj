@@ -1,6 +1,7 @@
 (ns mud.brain
   (:require
     [mud.models :as models]
+    [mud.combat :as combat]
     [clojure.string :as str]
     ))
 
@@ -18,7 +19,7 @@
   )
 
 (defn action [player-id action room-id]
-  (let [actions {"exits" list-exits "doors" list-exits "open" take-exit}
+  (let [actions {"exits" list-exits "doors" list-exits "open" take-exit "fight" combat/fight}
         action-list (str/split action #" ")
         possible-actions (filter #(contains? actions %) action-list)
         ]
