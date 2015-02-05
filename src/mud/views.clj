@@ -61,62 +61,48 @@
     )
   (response/redirect-after-post "/entrance"))
 
+(defn player-page [pl room action]
+  (base-page
+    (str (:name pl) " - the hero")
+
+    [:h1 (:name pl)]
+    [:div (str (format "items %s" (count (:treasure pl))))]
+    [:div (str (format "monsters killed %s" (count (:monster pl))))]
+    [:hr]
+
+    [:p "You are in:"]
+    [:p (:description room)]
+
+    [:div
+     (for [monster (:monster room)]
+       [:p (str (format "You see a %s with %s" (:name monster) (:description monster))) ]
+       )
+     ]
+
+    [:p action]
+
+    (form-to
+      {:class :form-horizontal}
+      [:post "/actions"]
+      [:div
+       (text-field :action)
+       (hidden-field :player_id (:id pl))
+       (hidden-field :room_id (:id room))
+       (submit-button {:class "btn btn-primary"} "What do you want to do?")
+       ]
+      )
+    )
+  )
+
 (defn player [id]
   (let [pl (models/player-by-id id) room (models/room-by-player-id id)]
-    (base-page
-      (str "#" id ": " (:name pl) " - the hero")
-
-      [:h1 (:name pl)]
-      [:hr]
-
-      [:p "You are in:"]
-      [:p (:description room)]
-
-      (form-to
-        {:class :form-horizontal}
-        [:post "/actions"]
-        [:div
-         (text-field :action)
-         (hidden-field :player_id (:id pl))
-         (hidden-field :room_id (:id room))
-         (submit-button {:class "btn btn-primary"} "What do you want to do?")
-         ]
-        )
-      )
+    (player-page pl room nil)
     )
   )
 
 (defn action [params]
   (let [action (brain/action (:player_id params) (:action params) (:room_id params)) pl (models/player-by-id (:player_id params)) room (models/room-by-player-id (:player_id params))]
-    (base-page
-      (str (:name pl) " - the hero")
-
-      [:h1 (:name pl)]
-      [:div (str (format "items %s" (count (:treasure pl))))]
-      [:div (str (format "monsters killed %s" (count (:monster pl))))]
-      [:hr]
-
-      [:p "You are in:"]
-      [:p (:description room)]
-
-      [:div
-       (for [monster (:monster room)]
-         [:p (str (format "You see a %s with %s" (:name monster) (:description monster))) ]
-         )
-       ]
-      [:p action]
-
-      (form-to
-        {:class :form-horizontal}
-        [:post "/actions"]
-        [:div
-         (text-field :action)
-         (hidden-field :player_id (:id pl))
-         (hidden-field :room_id (:id room))
-         (submit-button {:class "btn btn-primary"} "What do you want to do?")
-         ]
-        )
-      )
+    (player-page pl room action)
     )
   )
 
