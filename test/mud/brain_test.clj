@@ -14,8 +14,15 @@
 (fact "Take exit sets players new room to be from room from the exit"
       (take-exit 1 "take exit 1" 1) => irrelevant
       (provided
-        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1}]
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 0}]
         (models/set-player-room 1 42) => irrelevant :times 1
+        )
+      )
+
+(fact "Take exit doesn't work if room is locked"
+      (take-exit 1 "take exit 1" 1) => "This door is locked. You can't open it."
+      (provided
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
         )
       )
 

@@ -14,7 +14,11 @@
 
 (defn take-exit [player-id action room-id]
   (let [exits (models/exits-by-room room-id)]
-    (models/set-player-room player-id (:to_room (first exits)))
+    (if (= (:locked (first exits)) 1)
+      "This door is locked. You can't open it."
+      (models/set-player-room player-id (:to_room (first exits)))
+      )
+
     )
   )
 

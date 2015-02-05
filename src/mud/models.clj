@@ -34,7 +34,7 @@
            (many-to-many monster :player_monster)
            )
 
-(defentity exit (entity-fields :id :from_room :to_room :description))
+(defentity exit (entity-fields :id :from_room :to_room :description :locked))
 
 (defentity room_player (entity-fields :player_id :room_id))
 

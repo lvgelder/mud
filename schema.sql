@@ -7,7 +7,8 @@ CREATE TABLE exit (
   id INTEGER PRIMARY KEY,
   from_room INTEGER REFERENCES room(id),
   to_room INTEGER REFERENCES room(id),
-  description TEXT NOT NULL
+  description TEXT NOT NULL,
+  locked INTEGER default 0
 );
 
 CREATE TABLE weapon (
@@ -49,7 +50,9 @@ INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 1);
 INSERT INTO weapon (id, name, damage) VALUES (2, 'teeth', 1);
 INSERT INTO room (id, description) VALUES (1, "An empty room. Quite boring.");
 INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings everywhere. But you don't notice that because as soon as you walk in a vampire tries to eat you...");
+INSERT INTO room (id, description) VALUES(3, "A library with books all up to the ceilings and comfy sofas.");
 INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very ordinary door. With a doorknob");
+INSERT INTO exit(id, from_room, to_room, description, locked) VALUES (2, 2, 3, "Wooden door with a keyhole.", 1);
 INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
 
