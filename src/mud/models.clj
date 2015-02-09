@@ -7,7 +7,7 @@
        (sqlite3 {:db "mud.db"}))
 
 (defentity treasure
-           (entity-fields :id :name :worth))
+           (entity-fields :id :name :description))
 
 (defentity weapon
            (entity-fields :id :name :damage))

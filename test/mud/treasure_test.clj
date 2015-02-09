@@ -19,3 +19,18 @@
         (models/room-by-id 1) => {:id 1 :description "A room" :treasure []}
         )
       )
+
+(fact "Get back the treasure in the room"
+      (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room" :treasure [{:id 43 :description "A shiny key"}]}
+        )
+      )
+
+(fact "List all the treasure in the room"
+      (list-treasure-in-room 1 "" 1) => "<p>You see 2 items in this room.</p> <ul><li>A shiny key</li><li>A newspaper</li></ul>"
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :treasure [{:id 43 :description "A shiny key"} {:id 44 :description "A newspaper"}]}
+        )
+      )
