@@ -75,7 +75,7 @@
   (insert exit (values ex)))
 
 (defn room-by-id [id]
-  (first (select room (where {:id id}))))
+  (first (select room (with treasure) (with monster) (where {:id id}))))
 
 (defn player-by-id [id]
   (first (select player (with treasure) (with monster) (where {:id id}))))

@@ -1,29 +1,20 @@
 (ns mud.brain
   (:require
-    [mud.models :as models]
     [mud.combat :as combat]
+    [mud.exits :as exits]
     [clojure.string :as str]
     ))
 
 
-(defn list-exits [_ _ room-id]
-  (let [exits (models/exits-by-room room-id)]
-    (apply str (concat (format "<p>You see %s exits:</p> " (count exits)) (map #(str (:description %)) exits)))
-    )
-  )
 
-(defn take-exit [player-id action room-id]
-  (let [exits (models/exits-by-room room-id)]
-    (if (= (:locked (first exits)) 1)
-      "This door is locked. You can't open it."
-      (models/set-player-room player-id (:to_room (first exits)))
-      )
 
-    )
+(defn search [player_id action room_id]
+
   )
 
 (defn action [player-id action room-id]
-  (let [actions {"exits" list-exits "doors" list-exits "open" take-exit "fight" combat/fight}
+  (let [actions {"exits" exits/list-exits "doors" exits/list-exits
+                 "open" exits/take-exit "fight" combat/fight}
         action-list (str/split action #" ")
         possible-actions (filter #(contains? actions %) action-list)
         ]
