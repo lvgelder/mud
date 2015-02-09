@@ -34,3 +34,12 @@
                                   :treasure [{:id 43 :description "A shiny key"} {:id 44 :description "A newspaper"}]}
         )
       )
+
+(fact "You can't search a room if there is a monster and it isn't dead yet"
+      (list-treasure-in-room 1 "" 1) => "You try to search the room but the vampire tries to eat you..."
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room" :monster [{:id 1 :name "vampire"}]
+                                  :treasure [{:id 43 :description "A shiny key"}]}
+        (models/monsters_killed 1 1) => []
+        )
+      )

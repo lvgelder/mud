@@ -36,14 +36,28 @@
 
 ;todo - room has multiple treasures and player must choose one
 
-(defn treasure-item[name]
-  (str "<li>" name "</li>")
-  )
+
 
 (defn list-treasure-in-room [player-id action room-id]
-  (let [room (models/room-by-id room-id) treasure (:treasure room)]
-    (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
-                               (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
+
+  (defn treasure-item[name]
+    (str "<li>" name "</li>")
+    )
+
+  (defn not-killed-monster[player-id monster-id]
+    (let [killed-monster (models/monsters_killed player-id monster-id)]
+      (empty? killed-monster)
+      )
+    )
+
+  (let [room (models/room-by-id room-id) treasure (:treasure room) monsters (:monster room)
+        not-killed-monsters (filter #(not-killed-monster player-id (:id %)) monsters)
+        ]
+    (if (not (empty? not-killed-monsters))
+      (format "You try to search the room but the %s tries to eat you..." (:name (first not-killed-monsters)))
+      (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
+              (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
+      )
     )
   )
 
