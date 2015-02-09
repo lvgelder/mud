@@ -108,6 +108,11 @@
           (where {:player_id player_id :monster_id monster_id})
           ))
 
+(defn treasure_taken [player_id treasure_id]
+  (select player_treasure
+          (where {:player_id player_id :treasure_id treasure_id})
+          ))
+
 (defn collect-treasure [player_id treasure_id]
   (insert player_treasure
           (values {:treasure_id treasure_id :player_id player_id})))

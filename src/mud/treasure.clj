@@ -44,6 +44,12 @@
     )
   )
 
+(defn already-taken-treasure[player-id treasure-id]
+  (let [taken-treasure (models/treasure_taken player-id treasure-id)]
+   (not (empty? taken-treasure))
+    )
+  )
+
 (defn list-treasure-in-room [player-id action room-id]
 
   (defn treasure-item[name]
@@ -75,18 +81,18 @@
   (let [room (models/room-by-id room-id) treasure (:treasure room) action-list (str/split action #" ")
         treasure-to-take (filter #(seq-contains? action-list (:name %)) treasure)
         monsters (:monster room)
-        not-killed-monsters (filter #(not-killed-monster player-id (:id %)) monsters)]
-    (if (empty? treasure-to-take)
-      "You can't take that."
-      (if (not (empty? not-killed-monsters))
-        (str (format "You can't take it because the %s tries to eat you." (:name (first not-killed-monsters))))
-        (
-          do
-          (models/collect-treasure player-id (:id (first treasure-to-take)))
-          (str (format "You have the %s." (:name (first treasure-to-take))))
-          )
-
-        )
+        not-killed-monsters (filter #(not-killed-monster player-id (:id %)) monsters)
+        already-taken-treasure (filter #(already-taken-treasure player-id (:id %)) treasure-to-take)
+        ]
+    (cond
+      (empty? treasure-to-take) "You can't take that."
+      (not (empty? not-killed-monsters)) (str (format "You can't take it because the %s tries to eat you." (:name (first not-killed-monsters))))
+      (not (empty? already-taken-treasure)) "You already have that."
+      :else (
+              do
+              (models/collect-treasure player-id (:id (first treasure-to-take)))
+              (str (format "You have the %s." (:name (first treasure-to-take))))
+              )
       )
     )
   )
