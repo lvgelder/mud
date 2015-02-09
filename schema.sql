@@ -54,7 +54,7 @@ INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very o
 INSERT INTO exit(id, from_room, to_room, description, locked) VALUES (2, 2, 3, "Wooden door with a keyhole.", 1);
 INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
-INSERT INTO treasure (id, name, description) VALUES (1, 'first key', 'A key that looks like it might fit the lock...');
+INSERT INTO treasure (id, name, description) VALUES (1, 'key', 'A key that looks like it might fit the lock...');
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (2, 1);
 
 CREATE TABLE player (

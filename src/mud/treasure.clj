@@ -1,7 +1,7 @@
 (ns mud.treasure
   (:require
     [mud.models :as models]
-    ))
+    [clojure.string :as str]))
 
 ; search with no args
 ; if room has treasure call list-treasure-from room
@@ -36,18 +36,18 @@
 
 ;todo - room has multiple treasures and player must choose one
 
+(defn seq-contains? [coll target] (some #(= target %) coll))
 
+(defn not-killed-monster[player-id monster-id]
+  (let [killed-monster (models/monsters_killed player-id monster-id)]
+    (empty? killed-monster)
+    )
+  )
 
 (defn list-treasure-in-room [player-id action room-id]
 
   (defn treasure-item[name]
     (str "<li>" name "</li>")
-    )
-
-  (defn not-killed-monster[player-id monster-id]
-    (let [killed-monster (models/monsters_killed player-id monster-id)]
-      (empty? killed-monster)
-      )
     )
 
   (let [room (models/room-by-id room-id) treasure (:treasure room) monsters (:monster room)
@@ -68,6 +68,27 @@
     "There is no treasure in this room."
     )
   )
+  )
+
+(defn take-item-from-room [player-id action room-id]
+
+  (let [room (models/room-by-id room-id) treasure (:treasure room) action-list (str/split action #" ")
+        treasure-to-take (filter #(seq-contains? action-list (:name %)) treasure)
+        monsters (:monster room)
+        not-killed-monsters (filter #(not-killed-monster player-id (:id %)) monsters)]
+    (if (empty? treasure-to-take)
+      "You can't take that."
+      (if (not (empty? not-killed-monsters))
+        (str (format "You can't take it because the %s tries to eat you." (:name (first not-killed-monsters))))
+        (
+          do
+          (models/collect-treasure player-id (:id (first treasure-to-take)))
+          (str (format "You have the %s." (:name (first treasure-to-take))))
+          )
+
+        )
+      )
+    )
   )
 
 
