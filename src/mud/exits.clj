@@ -9,6 +9,8 @@
     )
   )
 
+
+;todo - take exit shouldn't work if there is a monster
 (defn take-exit [player-id action room-id]
   (let [exits (models/exits-by-room room-id)]
     (if (= (:locked (first exits)) 1)
