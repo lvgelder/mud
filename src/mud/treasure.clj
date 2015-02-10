@@ -77,7 +77,6 @@
   )
 
 (defn take-item-from-room [player-id action room-id]
-
   (let [room (models/room-by-id room-id) treasure (:treasure room) action-list (str/split action #" ")
         treasure-to-take (filter #(seq-contains? action-list (:name %)) treasure)
         monsters (:monster room)
