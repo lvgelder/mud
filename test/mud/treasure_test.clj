@@ -52,8 +52,6 @@
         (models/room-by-id 1) => {:id 1 :description "A room" :monster []
                                   :treasure [treasure]}
         (models/player-by-id 1) => player
-        (core/monsters-left-to-kill? player []) => false
-        (core/already-taken-treasure player treasure) => false
         (models/collect-treasure 1 43) => irrelevant :times 1
         )
       )
@@ -85,7 +83,6 @@
         (models/room-by-id 1) => {:id 1 :description "A room" :monster [monster]
                                   :treasure [treasure]}
         (models/player-by-id 1) => player
-        (core/monsters-left-to-kill? player [monster]) => true
         (models/collect-treasure 1 43) => irrelevant :times 0
         )
       )
@@ -99,8 +96,6 @@
         (models/room-by-id 1) => {:id 1 :description "A room" :monster []
                                   :treasure [treasure]}
         (models/player-by-id 1) => player
-        (core/monsters-left-to-kill? player []) => false
-        (core/already-taken-treasure player treasure) => true
         (models/collect-treasure 1 43) => irrelevant :times 0
         )
       )
