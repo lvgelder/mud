@@ -1,6 +1,7 @@
 (ns mud.core
   (:require
     [mud.models :as models]
+    [clojure.set :as set]
     ))
 
 (defn seq-contains? [coll target] (some #(= target %) coll))
@@ -11,10 +12,18 @@
   (seq-contains-id? items item)
   )
 
-(defn monsters-left-to-kill [player monsters]
+(defn not-contains-item-with-id [items item]
+  (not (seq-contains-id? items item))
+  )
+
+(defn monsters-left-to-kill? [player monsters]
   (let [killed-monsters (filter #(contains-item-with-id (:monster player) %) monsters)]
     (not (= (count killed-monsters) (count monsters)))
     )
+  )
+
+(defn monsters-left-to-kill [player monsters]
+  (filter #(not-contains-item-with-id (:monster player) %) monsters)
   )
 
 (defn already-taken-treasure [player treasure]

@@ -8,16 +8,16 @@
 (fact "Combat kills a monster"
       (fight 1 "" 1) => "You killed the vampire!"
       (provided
-        (models/monster-by-room 1) => {:id 1 :name "vampire"}
-        (models/monsters_killed 1 1) => []
+        (models/player-by-id 1) => {:id 1 :monster []}
+        (models/monster-by-room 1) => [{:id 1 :name "vampire"}]
         )
       )
 
 (fact "Cant kill the same monster twice"
-      (fight 1 "" 1) => "You already fought the vampire and won. It is lying dead before you..."
+      (fight 1 "" 1) => "Nothing to fight"
       (provided
-        (models/monster-by-room 1) => {:id 1 :name "vampire"}
-        (models/monsters_killed 1 1) => [{:monster_id 1 :player_id 1}]
+        (models/monster-by-room 1) => [{:id 1 :name "vampire"}]
+        (models/player-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
         )
       )
 
@@ -25,5 +25,6 @@
       (fight 1 "" 1) => "Nothing to fight"
       (provided
         (models/monster-by-room 1) => []
+        (models/player-by-id 1) => {:id 1 :monster []}
         )
       )

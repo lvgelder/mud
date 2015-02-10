@@ -48,7 +48,7 @@
         monsters (:monster room)
         player (models/player-by-id player-id)
         ]
-    (if (core/monsters-left-to-kill player monsters)
+    (if (core/monsters-left-to-kill? player monsters)
       (format "You try to search the room but the %s tries to eat you..." (:name (first monsters)))
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
               (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
@@ -64,7 +64,7 @@
         ]
     (cond
       (empty? treasure-to-take) "You can't take that."
-      (core/monsters-left-to-kill player monsters) (str (format "You can't take it because the %s tries to eat you." (:name (first monsters))))
+      (core/monsters-left-to-kill? player monsters) (str (format "You can't take it because the %s tries to eat you." (:name (first monsters))))
       (core/already-taken-treasure player treasure-to-take) "You already have that."
       :else (
               do

@@ -89,11 +89,11 @@
                  )))
 
 (defn monster-by-room [room_id]
-  (first (select monster
+  (select monster
                  (join room_monster
                        (= :room_monster.monster_id :id))
                  (where {:room_monster.room_id room_id})
-                 )))
+                 ))
 
 (defn player-by-name [name]
   (first (select player (where {:name name}))))

@@ -1,16 +1,19 @@
 (ns mud.combat
   (:require
     [mud.models :as models]
+    [mud.core :as core]
     ))
 
-(defn fight [player_id action room_id]
-  (let [monster (models/monster-by-room room_id) killed (models/monsters_killed player_id (:id monster))]
-    (cond (empty? monster) "Nothing to fight"
-          (not (empty? killed)) (format "You already fought the %s and won. It is lying dead before you..." (:name monster))
+(defn fight [player-id action room-id]
+  (let [monsters (models/monster-by-room room-id)
+        player (models/player-by-id player-id)
+        unkilled-monsters (core/monsters-left-to-kill player monsters)
+        ]
+    (cond (empty? unkilled-monsters) "Nothing to fight"
           :else (
                   do
-                  (models/kill-monster player_id (:id monster))
-                  (format "You killed the %s!" (:name monster))
+                  (models/kill-monster player-id (:id (first unkilled-monsters)))
+                  (format "You killed the %s!" (:name (first unkilled-monsters)))
                   )
 
           )
