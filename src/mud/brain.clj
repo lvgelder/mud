@@ -7,7 +7,7 @@
     ))
 
 
-(defn actions
+(defn verbs
   []
   {"exits" exits/list-exits "doors" exits/list-exits "look" exits/list-exits
    "open" exits/take-exit "fight" combat/fight
@@ -15,10 +15,10 @@
   )
 
 
-(defn action [player-id action room-id]
-  (let [action-list (str/split action #" ")
-        verb (first (filter #(contains? (actions) %) action-list))]
+(defn action [player-id user-input room-id]
+  (let [user-words (str/split user-input #"\s+")
+        verb (first (filter #(contains? (verbs) %) user-words))]
     (if verb
-      (((actions) verb) player-id action room-id)
+      (((verbs) verb) player-id user-input room-id)
       "I don't know how to do that")))
 
