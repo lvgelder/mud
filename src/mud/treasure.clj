@@ -65,7 +65,7 @@
     (cond
       (empty? treasure-to-take) "You can't take that."
       (core/monsters-left-to-kill? player monsters) (str (format "You can't take it because the %s tries to eat you." (:name (first monsters))))
-      (core/already-taken-treasure player treasure-to-take) "You already have that."
+      (core/already-taken-treasure? player treasure-to-take) "You already have that."
       :else (
               do
               (models/collect-treasure player-id (:id treasure-to-take))

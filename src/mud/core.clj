@@ -1,8 +1,4 @@
-(ns mud.core
-  (:require
-    [mud.models :as models]
-    [clojure.set :as set]
-    ))
+(ns mud.core)
 
 (defn seq-contains? [coll target] (some #(= target %) coll))
 
@@ -26,6 +22,6 @@
   (filter #(not-contains-item-with-id (:monster player) %) monsters)
   )
 
-(defn already-taken-treasure [player treasure]
+(defn already-taken-treasure? [player treasure]
     (contains-item-with-id (:treasure player) treasure)
   )
