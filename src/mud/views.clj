@@ -82,8 +82,15 @@
      ]
     [:div (str (format "monsters killed %s" (count (:monster pl))))]
 
-
     [:hr]
+
+    (if action
+      [:div
+        [:p action]
+        [:hr]
+        ]
+      )
+
 
     [:p "You are in:"]
     [:p (:description room)]
@@ -93,8 +100,6 @@
        [:p (str (format "You see a %s with %s" (:name monster) (:description monster))) ]
        )
      ]
-
-    [:p action]
 
     (form-to
       {:class :form-horizontal}

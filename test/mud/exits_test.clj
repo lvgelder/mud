@@ -81,6 +81,28 @@
         )
       )
 
+(fact "Use key doesnt do anything if you dont have a key"
+      (take-exit 1 "use key" 1) => "You don't have the key."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "fish"}]}
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
+        (models/monster-by-room 1) => []
+        (models/treasure-used 1 4) => irrelevant :times 0
+        (models/set-player-room 1 42) => irrelevant :times 0
+        )
+      )
+
+(fact "Use key doesnt do anything if room is not locked dont have a key"
+      (take-exit 1 "use key" 1) => "The door is not locked."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "key"}]}
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 0}]
+        (models/monster-by-room 1) => []
+        (models/treasure-used 1 4) => irrelevant :times 0
+        (models/set-player-room 1 42) => irrelevant :times 0
+        )
+      )
+
 (fact "Using key counts as using key"
       (using-key? "use key") => true
       )

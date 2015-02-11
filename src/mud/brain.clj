@@ -12,10 +12,15 @@
   (exits/take-exit player-id user-input room-id)
   )
 
+; only one thing to try right now. this will need to get smarter later
+(defn try-what [player-id user-input room-id]
+  (exits/take-exit player-id user-input room-id)
+  )
+
 (defn verbs
   []
   {"exits" exits/list-exits "doors" exits/list-exits "look" exits/list-exits
-   "open" exits/take-exit "fight" combat/fight "use" use-what "unlock" exits/take-exit
+   "open" exits/take-exit "fight" combat/fight "use" use-what "try" try-what "unlock" exits/take-exit
    "search" treasure/list-treasure-in-room "take" treasure/take-item-from-room
    "help" core/help
    }
