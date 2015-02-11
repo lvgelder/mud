@@ -22,3 +22,35 @@
         (exits/take-exit 1 "open door" 1) => irrelevant :times 1
         )
       )
+
+(fact "Asking to use something should ask if we are using a key"
+      (use-what 1 "use key" 1) => irrelevant
+      (provided
+        (exits/using-key? "use key") => true
+        (exits/take-exit 1 "use key" 1) => irrelevant :times 1
+        )
+      )
+
+(fact "Asking to use something should ask if we are using a key"
+      (use-what 1 "use key" 1) => "I don't know how to use that."
+      (provided
+        (exits/using-key? "use key") => false
+        (exits/take-exit 1 "use key" 1) => irrelevant :times 0
+        )
+      )
+
+(fact "Asking to use something should ask if we are using a key"
+      (try-what 1 "try key" 1) => irrelevant
+      (provided
+        (exits/using-key? "try key") => true
+        (exits/take-exit 1 "try key" 1) => irrelevant :times 1
+        )
+      )
+
+(fact "Asking to use something should ask if we are using a key"
+      (try-what 1 "try key" 1) => "I don't know how to try that."
+      (provided
+        (exits/using-key? "try key") => false
+        (exits/take-exit 1 "try key" 1) => irrelevant :times 0
+        )
+      )

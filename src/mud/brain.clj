@@ -9,13 +9,15 @@
 
 ; only one thing to use right now. this will need to get smarter later
 (defn use-what [player-id user-input room-id]
-  (exits/take-exit player-id user-input room-id)
-  )
+  (if (exits/using-key? user-input)
+    (exits/take-exit player-id user-input room-id)
+    "I don't know how to use that."))
 
 ; only one thing to try right now. this will need to get smarter later
 (defn try-what [player-id user-input room-id]
-  (exits/take-exit player-id user-input room-id)
-  )
+  (if (exits/using-key? user-input)
+    (exits/take-exit player-id user-input room-id)
+    "I don't know how to try that."))
 
 (defn verbs
   []
