@@ -46,4 +46,12 @@
       (monsters-left-to-kill? player monsters) => false
       )
 
+(fact "return only items that match name"
+      (items-with-name [{:name "fish"} {:name "banana"}] "fish") => [{:name "fish"}]
+      )
+
+(fact "If nothing matches, return nothing"
+      (items-with-name [{:name "fish"} {:name "banana"}] "penguin") => []
+      )
+
 

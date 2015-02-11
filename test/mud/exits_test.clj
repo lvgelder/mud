@@ -59,3 +59,48 @@
         (models/monster-by-room 1) => [{:id 1 :name "vampire"}]
         )
       )
+
+(fact "Take exit unlocks door if player has a key and uses it"
+      (take-exit 1 "use key" 1) => "You unlock the door and move to the next room."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "key"}]}
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
+        (models/monster-by-room 1) => []
+        (models/treasure-used 1 4) => irrelevant :times 1
+        (models/set-player-room 1 42) => irrelevant :times 1
+        )
+      )
+
+(fact "Take exit doesn't unlock door if player has a key but doesn't use it"
+      (take-exit 1 "open door" 1) => "This door is locked. You can't open it."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 42 :name "key"}]}
+        (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
+        (models/monster-by-room 1) => []
+        (models/set-player-room 1 42) => irrelevant :times 0
+        )
+      )
+
+(fact "Using key counts as using key"
+      (using-key? "use key") => true
+      )
+
+(fact "Unlocking door counts as using key"
+      (using-key? "unlock door") => true
+      )
+
+(fact "Trying key counts as using key"
+      (using-key? "try key on door") => true
+      )
+
+(fact "Can't unlock a fish"
+      (using-key? "unlock fish") => nil
+      )
+
+(fact "Can't use a fish"
+      (using-key? "try fish on door") => nil
+      )
+
+(fact "Can't open door it is locked"
+      (using-key? "open door") => false
+      )

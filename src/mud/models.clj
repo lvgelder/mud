@@ -116,3 +116,8 @@
 (defn collect-treasure [player_id treasure_id]
   (insert player_treasure
           (values {:treasure_id treasure_id :player_id player_id})))
+
+(defn treasure-used [player_id treasure_id]
+  (delete player_treasure
+          (where {:player_id player_id :treasure_id treasure_id}))
+  )
