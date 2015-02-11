@@ -66,8 +66,23 @@
     (str (:name pl) " - the hero")
 
     [:h1 (:name pl)]
-    [:div (str (format "items %s" (count (:treasure pl))))]
+    [:div
+     (if (not (empty? (:treasure pl)))
+       [:div  {:class "pull-right"}
+        "Items"
+        [:ul
+         (for [item (:treasure pl)]
+           [:li (:description item) ]
+           )
+         ]
+        ]
+       )
+     (str (format "items %s" (count (:treasure pl))))
+
+     ]
     [:div (str (format "monsters killed %s" (count (:monster pl))))]
+
+
     [:hr]
 
     [:p "You are in:"]

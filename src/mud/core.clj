@@ -25,3 +25,7 @@
 (defn already-taken-treasure? [player treasure]
     (contains-item-with-id (:treasure player) treasure)
   )
+
+(defn help [player-id action room-id]
+  "Try looking around. Try searching. If there is a monster, try fighting it. If there is a door, try opening it."
+  )

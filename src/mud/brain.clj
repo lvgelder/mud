@@ -4,14 +4,16 @@
     [mud.exits :as exits]
     [mud.treasure :as treasure]
     [clojure.string :as str]
-    ))
+    [mud.core :as core]))
 
 
 (defn verbs
   []
   {"exits" exits/list-exits "doors" exits/list-exits "look" exits/list-exits
    "open" exits/take-exit "fight" combat/fight
-   "search" treasure/list-treasure-in-room "take" treasure/take-item-from-room}
+   "search" treasure/list-treasure-in-room "take" treasure/take-item-from-room
+   "help" core/help
+   }
   )
 
 
