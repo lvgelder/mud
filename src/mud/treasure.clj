@@ -14,18 +14,6 @@
 ; if room has monster and actions matches monster name call list-treasure-from-monster
 ; otherwise say we don't know what to search for
 
-;remove-item
-;remove item from player-treasure
-
-;can collect treasure?
-; if player has more than 5 items can't pick up more treasure
-
-; do we need an explicit mapping to key id for how to unlock the door? Or just a key?
-; when you use a key call remove-item to remove it from player items
-
-;list player items properly
-
-;todo - room has multiple treasures and player must choose one
 
 (defn list-treasure-in-room [player-id action room-id]
 
@@ -52,8 +40,9 @@
   )
 
 (defn take-item-from-room [player-id action room-id]
-  (let [room (models/room-by-id room-id) treasure (:treasure room) action-list (str/split action #" ")
-        treasure-to-take (first (filter #(core/seq-contains? action-list (:name %)) treasure))
+  (let [room (models/room-by-id room-id)
+        treasure (:treasure room)
+        treasure-to-take (first (core/treasure-mentioned action treasure))
         monsters (:monster room)
         player (models/player-by-id player-id)
         ]
