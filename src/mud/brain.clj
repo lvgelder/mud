@@ -25,7 +25,7 @@
   {"exits" exits/list-exits "doors" exits/list-exits "look" exits/list-exits
    "open" exits/take-exit "fight" combat/fight "use" use-what "try" try-what "unlock" exits/take-exit
    "search" treasure/list-treasure-in-room "take" treasure/take-item-from-room
-   "help" core/help
+   "help" core/help "drop" treasure/drop-item
    }
   )
 

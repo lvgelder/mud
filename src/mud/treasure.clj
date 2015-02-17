@@ -35,13 +35,14 @@
 
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
-        monsters (:monster room)
         player (models/player-by-id player-id)
+        treasure-left-in-room (core/treasure-left-in-room player treasure)
+        monsters (:monster room)
         ]
     (if (core/monsters-left-to-kill? player monsters)
       (format "You try to search the room but the %s tries to eat you..." (:name (first monsters)))
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
-              (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
+              (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))
       )
     )
   )

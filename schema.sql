@@ -55,7 +55,21 @@ INSERT INTO exit(id, from_room, to_room, description, locked) VALUES (2, 2, 3, "
 INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
 INSERT INTO treasure (id, name, description) VALUES (1, 'key', 'A key that looks like it might fit the lock...');
+INSERT INTO treasure (id, name, description) VALUES (2, 'book', 'An illustrated book of traffic lights around the world.');
+INSERT INTO treasure (id, name, description) VALUES (3, 'newspaper', "Today's edition of your favourite newspaper");
+INSERT INTO treasure (id, name, description) VALUES (4, 'coffee', 'A cup of hot coffee. Mmm that smells good.');
+INSERT INTO treasure (id, name, description) VALUES (5, 'scone', 'A scone with clotted cream and jam.');
+INSERT INTO treasure (id, name, description) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.');
+INSERT INTO treasure (id, name, description) VALUES (7, 'pen', 'A fountain pen.');
+INSERT INTO treasure (id, name, description) VALUES (8, 'ink', 'A jar of ink.');
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (2, 1);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 2);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 3);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 4);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 5);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 6);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 7);
+INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 8);
 
 CREATE TABLE player (
   id INTEGER PRIMARY KEY,

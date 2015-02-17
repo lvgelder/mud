@@ -24,6 +24,16 @@
         )
       )
 
+(fact "List all the treasure in the room that you don't already have"
+      (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster []
+                                  :treasure [{:id 43 :description "A shiny key"}{:id 44 :description "A newspaper"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 44 :description "A newspaper"}] :monster []}
+        )
+      )
+
 (fact "You can't search a room if there is a monster and it isn't dead yet"
       (list-treasure-in-room 1 "" 1) => "You try to search the room but the vampire tries to eat you..."
       (provided
