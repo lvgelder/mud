@@ -80,6 +80,9 @@
 (defn player-by-id [id]
   (first (select player (with treasure) (with monster) (where {:id id}))))
 
+(defn monster-by-id [id]
+  (first (select monster (with treasure) (where {:id id}))))
+
 (defn room-by-player-id [pl_id]
   (first (select room
                  (with monster)

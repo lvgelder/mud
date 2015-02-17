@@ -61,11 +61,17 @@
 
 (fact "Searching the vampire should list its treasure"
       (def treasure [{:description "A cup of coffee"}{:description "A cookie"}])
-      (list-treasure-from-monster [{:id 1 :name "vampire" :treasure treasure}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
+      (list-treasure-from-monster [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
+      (provided
+        (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure treasure}
+        )
       )
 
 (fact "Searching the vampire should 0 items if it has no treasure."
-      (list-treasure-from-monster [{:id 1 :name "vampire" :treasure []}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
+      (list-treasure-from-monster [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
+      (provided
+        (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure []}
+        )
       )
 
 

@@ -62,6 +62,7 @@ INSERT INTO treasure (id, name, description) VALUES (5, 'scone', 'A scone with c
 INSERT INTO treasure (id, name, description) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.');
 INSERT INTO treasure (id, name, description) VALUES (7, 'pen', 'A fountain pen.');
 INSERT INTO treasure (id, name, description) VALUES (8, 'ink', 'A jar of ink.');
+INSERT INTO treasure (id, name, description) VALUES (9, 'yogurt', 'A tub of yogurt. Strawberry flavour.');
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (2, 1);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 2);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 3);
@@ -70,6 +71,7 @@ INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 5);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 6);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 7);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 8);
+INSERT INTO monster_treasure(monster_id, treasure_id) VALUES (1, 9);
 
 CREATE TABLE player (
   id INTEGER PRIMARY KEY,

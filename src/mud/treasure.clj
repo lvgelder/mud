@@ -25,8 +25,8 @@
   (defn treasure-item[name]
     (str "<li>" name "</li>")
     )
-  (let [treasure (:treasure (first monsters-mentioned))]
-    (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
+  (let [monster (models/monster-by-id (:id (first monsters-mentioned))) treasure (:treasure monster)]
+    (format "You search the %s and find %s items.</p> <ul>%s</ul>"
             (:name (first monsters-mentioned)) (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
     )
   )
