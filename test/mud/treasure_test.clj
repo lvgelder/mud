@@ -6,6 +6,25 @@
             [mud.brain :refer :all]
             [mud.core :as core]))
 
+(fact "Can't search if there is an unkilled monster in the room"
+      (search 1 "search" 1) => "You try to search but the vampire tries to eat you..."
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster [{:id 1 :name "vampire"}]
+                                  :treasure []}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
+        )
+      )
+
+(fact "Typing 'search' by itself lists the treasure in the room"
+      (search 1 "search" 1) => irrelevant
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster [] :treasure [{:id 1 :description "A shiny key"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
+        (list-treasure-in-room 1 "search" 1) => irrelevant :times 1))
+
+
 (fact "Get back the treasure in the room if there are no monsters"
       (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
       (provided

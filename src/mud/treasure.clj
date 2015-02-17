@@ -14,11 +14,6 @@
 ; if room has monster and actions matches monster name call list-treasure-from-monster
 ; otherwise say we don't know what to search for
 
-(defn search [player-id action room-id]
-
-  )
-
-
 (defn list-treasure-in-room [player-id action room-id]
 
   (defn treasure-item[name]
@@ -35,6 +30,17 @@
       (format "You try to search the room but the %s tries to eat you..." (:name (first monsters)))
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
               (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))
+      )
+    )
+  )
+
+(defn search [player-id action room-id]
+  (let [room (models/room-by-id room-id)
+        player (models/player-by-id player-id)
+        monsters-left-to-kill (core/monsters-left-to-kill player (:monster room))]
+    (cond
+      (not (empty? monsters-left-to-kill)) (format "You try to search but the %s tries to eat you..." (:name (first monsters-left-to-kill)))
+      (= action "search") (list-treasure-in-room player-id action room-id)
       )
     )
   )
