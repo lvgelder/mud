@@ -16,6 +16,15 @@
         )
       )
 
+(fact "Can search if there is a killed monster in the room"
+      (search 1 "search" 1) => irrelevant
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster [{:id 1 :name "vampire"}]
+                                  :treasure []}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster [{:id 1 :name "vampire"}]}
+        (list-treasure-in-room 1 "search" 1) => irrelevant :times 1))
+
 (fact "Typing 'search' by itself lists the treasure in the room"
       (search 1 "search" 1) => irrelevant
       (provided
@@ -55,16 +64,12 @@
       (list-treasure-from-monster [{:id 1 :name "vampire" :treasure treasure}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
       )
 
-
-(fact "Get back the treasure in the room if there are no monsters"
-      (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
-      (provided
-        (models/room-by-id 1) => {:id 1 :description "A room" :monster [] :treasure [{:id 43 :description "A shiny key"}]}
-        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
-        )
+(fact "Searching the vampire should 0 items if it has no treasure."
+      (list-treasure-from-monster [{:id 1 :name "vampire" :treasure []}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
       )
 
-(fact "List all the treasure in the room if there are no monsters"
+
+(fact "List all the treasure in the room"
       (list-treasure-in-room 1 "" 1) => "<p>You see 2 items in this room.</p> <ul><li>A shiny key</li><li>A newspaper</li></ul>"
       (provided
         (models/room-by-id 1) => {:id 1 :description "A room"
@@ -83,26 +88,6 @@
         (models/player-by-id 1) => {:id 1 :treasure [{:id 44 :description "A newspaper"}] :monster []}
         )
       )
-
-(fact "You can't search a room if there is a monster and it isn't dead yet"
-      (list-treasure-in-room 1 "" 1) => "You try to search the room but the vampire tries to eat you..."
-      (provided
-        (models/room-by-id 1) => {:id 1 :description "A room" :monster [{:id 1 :name "vampire"}]
-                                  :treasure [{:id 43 :description "A shiny key"}]}
-        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
-        )
-      )
-
-(fact "List all the treasure in the room if there are monsters but you already killed them"
-      (list-treasure-in-room 1 "" 1) => "<p>You see 2 items in this room.</p> <ul><li>A shiny key</li><li>A newspaper</li></ul>"
-      (provided
-        (models/room-by-id 1) => {:id 1 :description "A room"
-                                  :monster [{:id 1 :name "vampire"}]
-                                  :treasure [{:id 43 :description "A shiny key"} {:id 44 :description "A newspaper"}]}
-        (models/player-by-id 1) => {:id 1 :treasure [] :monster [{:id 1 :name "vampire"}]}
-        )
-      )
-
 
 (fact "Can take key if ask for it"
       (def player {:id 1 :treasure [] :monster []})

@@ -4,16 +4,6 @@
     [mud.core :as core]
     [clojure.string :as str]))
 
-; search with no args
-; if room has treasure call list-treasure-from room
-; if room has monster call list-treasure-from-monster
-; if no treasure or monster say there is nothing to find
-
-;search with args
-; if actions contains both search and room, call list-treasure-from-room
-; if room has monster and actions matches monster name call list-treasure-from-monster
-; otherwise say we don't know what to search for
-
 (defn list-treasure-in-room [player-id action room-id]
 
   (defn treasure-item[name]
@@ -24,13 +14,10 @@
         treasure (:treasure room)
         player (models/player-by-id player-id)
         treasure-left-in-room (core/treasure-left player treasure)
-        monsters (:monster room)
         ]
-    (if (core/monsters-left-to-kill? player monsters)
-      (format "You try to search the room but the %s tries to eat you..." (:name (first monsters)))
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
               (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))
-      )
+
     )
   )
 
