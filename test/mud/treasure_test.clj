@@ -112,3 +112,25 @@
         (models/collect-treasure 1 43) => irrelevant :times 0
         )
       )
+
+(fact "can drop treasure you possess"
+      (def treasure {:id 43 :name "key" :description "A shiny key"})
+      (def player {:id 1 :treasure [treasure] :monster []})
+
+      (drop-item 1 "drop key" 1) => "You put the key down."
+      (provided
+        (models/player-by-id 1) => player
+        (models/remove-treasure-from-player 1 43) => irrelevant :times 1
+        )
+      )
+
+(fact "can't drop treasure you don't possess"
+      (def treasure {:id 43 :name "key" :description "A shiny key"})
+      (def player {:id 1 :treasure [treasure] :monster []})
+
+      (drop-item 1 "drop fish" 1) => "You don't have that."
+      (provided
+        (models/player-by-id 1) => player
+        (models/remove-treasure-from-player 1 43) => irrelevant :times 0
+        )
+      )

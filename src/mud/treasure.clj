@@ -14,16 +14,6 @@
 ; if room has monster and actions matches monster name call list-treasure-from-monster
 ; otherwise say we don't know what to search for
 
-;get-treasure-from-room
-;if room has treasure return it
-;if no treasure say that
-
-;get-treasure-from-monster
-;if monster is dead and has treasure, return that
-;if monster is dead but has no treasure say that
-; if monster not dead, warn that the monster tries to eat you while you search
-; call combat/monster-attack-player
-
 ;remove-item
 ;remove item from player-treasure
 
@@ -77,6 +67,22 @@
               (str (format "You have the %s." (:name treasure-to-take)))
               )
       )
+    )
+  )
+
+(defn drop-item [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        treasure (:treasure player)
+        droppable-treasure (core/treasure-mentioned action treasure)]
+    (if (empty? droppable-treasure)
+      "You don't have that."
+      (do
+        (models/remove-treasure-from-player (:id player) (:id (first droppable-treasure)))
+        (str (format "You put the %s down." (:name (first droppable-treasure))))
+        )
+
+      )
+
     )
   )
 

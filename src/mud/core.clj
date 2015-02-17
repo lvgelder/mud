@@ -1,4 +1,5 @@
-(ns mud.core)
+(ns mud.core
+  (:require [clojure.string :as str]))
 
 (defn seq-contains? [coll target] (some #(= target %) coll))
 
@@ -35,3 +36,9 @@
   )
 
 (filter #(= (:name %) "fish") [{:name "fish"} {:name "banana"}])
+
+(defn treasure-mentioned [action treasure]
+  (let [action-list (str/split action #"\s+")]
+    (filter #(seq-contains? action-list (:name %)) treasure)
+    )
+  )

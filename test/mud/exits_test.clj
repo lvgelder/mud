@@ -66,7 +66,7 @@
         (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "key"}]}
         (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
         (models/monster-by-room 1) => []
-        (models/treasure-used 1 4) => irrelevant :times 1
+        (models/remove-treasure-from-player 1 4) => irrelevant :times 1
         (models/set-player-room 1 42) => irrelevant :times 1
         )
       )
@@ -87,7 +87,7 @@
         (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "fish"}]}
         (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1}]
         (models/monster-by-room 1) => []
-        (models/treasure-used 1 4) => irrelevant :times 0
+        (models/remove-treasure-from-player 1 4) => irrelevant :times 0
         (models/set-player-room 1 42) => irrelevant :times 0
         )
       )
@@ -98,7 +98,7 @@
         (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "key"}]}
         (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 0}]
         (models/monster-by-room 1) => []
-        (models/treasure-used 1 4) => irrelevant :times 0
+        (models/remove-treasure-from-player 1 4) => irrelevant :times 0
         (models/set-player-room 1 42) => irrelevant :times 0
         )
       )

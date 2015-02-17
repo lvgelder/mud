@@ -35,7 +35,7 @@
         "You don't have the key."
         (
           do
-          (models/treasure-used (:id player) (:id key))
+          (models/remove-treasure-from-player (:id player) (:id key))
           (models/set-player-room (:id player) (:to_room exit))
           "You unlock the door and move to the next room."
           )
