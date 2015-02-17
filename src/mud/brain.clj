@@ -8,6 +8,7 @@
 
 
 ; only one thing to use right now. this will need to get smarter later
+; exits?
 (defn use-what [player-id user-input room-id]
   (if (exits/using-key? user-input)
     (exits/take-exit player-id user-input room-id)
@@ -36,6 +37,9 @@
       "I don't know how to do that")))
 
 
+
+;run command
+;apply verb noun
 
 
 

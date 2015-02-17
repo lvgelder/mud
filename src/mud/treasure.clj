@@ -56,6 +56,10 @@
     )
   )
 
+(defn has-five-items-or-more[player]
+  (>= (count (:treasure player)) 5)
+  )
+
 (defn take-item-from-room [player-id action room-id]
   (let [room (models/room-by-id room-id) treasure (:treasure room) action-list (str/split action #" ")
         treasure-to-take (first (filter #(core/seq-contains? action-list (:name %)) treasure))
@@ -66,6 +70,7 @@
       (empty? treasure-to-take) "You can't take that."
       (core/monsters-left-to-kill? player monsters) (str (format "You can't take it because the %s tries to eat you." (:name (first monsters))))
       (core/already-taken-treasure? player treasure-to-take) "You already have that."
+      (has-five-items-or-more player) "You already have 5 items. You need to drop something."
       :else (
               do
               (models/collect-treasure player-id (:id treasure-to-take))

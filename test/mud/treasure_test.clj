@@ -99,3 +99,16 @@
         (models/collect-treasure 1 43) => irrelevant :times 0
         )
       )
+
+(fact "can't take treasure if you already have 5 items"
+      (def treasure {:id 43 :name "key" :description "A shiny key"})
+      (def player {:id 1 :treasure [{:id 1}{:id 2}{:id 3}{:id 4}{:id 5}] :monster []})
+
+      (take-item-from-room 1 "take key" 1) => "You already have 5 items. You need to drop something."
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room" :monster []
+                                  :treasure [treasure]}
+        (models/player-by-id 1) => player
+        (models/collect-treasure 1 43) => irrelevant :times 0
+        )
+      )
