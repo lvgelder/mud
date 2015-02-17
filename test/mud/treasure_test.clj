@@ -185,3 +185,10 @@
         (models/remove-treasure-from-player 1 43) => irrelevant :times 0
         )
       )
+
+(fact "can't take anything if monster isn't dead"
+      (take-what 1 "take key" 1) => "You can't take that because the vampire tries to eat you."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster []}
+        (models/room-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]})
+        )

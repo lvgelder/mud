@@ -26,7 +26,7 @@
     (str "<li>" name "</li>")
     )
   (let [monster (models/monster-by-id (:id (first monsters-mentioned))) treasure (:treasure monster)]
-    (format "You search the %s and find %s items.</p> <ul>%s</ul>"
+    (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
             (:name (first monsters-mentioned)) (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
     )
   )
@@ -88,6 +88,16 @@
 
       )
 
+    )
+  )
+
+(defn take-what [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        room (models/room-by-id room-id)
+        unkilled-monsters (core/monsters-left-to-kill player (:monster room))]
+    (cond
+      (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
+      )
     )
   )
 
