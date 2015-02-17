@@ -35,15 +35,13 @@
   (not (already-taken-treasure? player treasure) )
   )
 
-(defn treasure-left-in-room [player treasure]
+(defn treasure-left [player treasure]
   (filter #(not-already-taken-treasure player %) treasure)
   )
 
 (defn help [player-id action room-id]
   "Try looking around. Try searching. If there is a monster, try fighting it. If there is a door, try opening it."
   )
-
-(filter #(= (:name %) "fish") [{:name "fish"} {:name "banana"}])
 
 (defn treasure-mentioned [action treasure]
   (let [action-list (str/split action #"\s+")]

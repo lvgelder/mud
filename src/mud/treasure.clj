@@ -14,6 +14,10 @@
 ; if room has monster and actions matches monster name call list-treasure-from-monster
 ; otherwise say we don't know what to search for
 
+(defn search [player-id action room-id]
+
+  )
+
 
 (defn list-treasure-in-room [player-id action room-id]
 
@@ -24,7 +28,7 @@
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         player (models/player-by-id player-id)
-        treasure-left-in-room (core/treasure-left-in-room player treasure)
+        treasure-left-in-room (core/treasure-left player treasure)
         monsters (:monster room)
         ]
     (if (core/monsters-left-to-kill? player monsters)
