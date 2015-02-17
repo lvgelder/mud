@@ -24,6 +24,37 @@
         (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
         (list-treasure-in-room 1 "search" 1) => irrelevant :times 1))
 
+(fact "Typing 'search fish' tells you that you can't do that"
+      (search 1 "search fish" 1) => "You can't search the fish because there is no fish."
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster [] :treasure [{:id 1 :description "A shiny key"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
+        (list-treasure-in-room 1 "search fish" 1) => irrelevant :times 0))
+
+(fact "Typing 'search room' should search the room you are in"
+      (search 1 "search room" 1) => irrelevant
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster [] :treasure [{:id 1 :description "A shiny key"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster []}
+        (list-treasure-in-room 1 "search room" 1) => irrelevant :times 1))
+
+(fact "Typing 'search vampire' should search the vampire"
+      (def monsters [{:id 1 :name "vampire"}])
+
+      (search 1 "search vampire" 1) => irrelevant
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster monsters :treasure [{:id 1 :description "A shiny key"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [] :monster [{:id 1 :name "vampire"}]}
+        (list-treasure-from-monster monsters) => irrelevant :times 1))
+
+(fact "Searching the vampire should list its treasure"
+      (def treasure [{:description "A cup of coffee"}{:description "A cookie"}])
+      (list-treasure-from-monster [{:id 1 :name "vampire" :treasure treasure}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
+      )
+
 
 (fact "Get back the treasure in the room if there are no monsters"
       (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"

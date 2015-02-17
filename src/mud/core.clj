@@ -48,3 +48,9 @@
     (filter #(seq-contains? action-list (:name %)) treasure)
     )
   )
+
+(defn monsters-mentioned [action monsters]
+  (let [action-list (str/split action #"\s+")]
+    (filter #(seq-contains? action-list (:name %)) monsters)
+    )
+  )

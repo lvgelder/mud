@@ -34,13 +34,31 @@
     )
   )
 
+(defn list-treasure-from-monster [monsters-mentioned]
+  (defn treasure-item[name]
+    (str "<li>" name "</li>")
+    )
+  (let [treasure (:treasure (first monsters-mentioned))]
+    (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
+            (:name (first monsters-mentioned)) (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
+    )
+  )
+
 (defn search [player-id action room-id]
   (let [room (models/room-by-id room-id)
         player (models/player-by-id player-id)
-        monsters-left-to-kill (core/monsters-left-to-kill player (:monster room))]
+        monsters (:monster room)
+        monsters-left-to-kill (core/monsters-left-to-kill player monsters)
+        action-list (str/split action #"\s+")
+        monsters-mentioned (core/monsters-mentioned action monsters)
+        ]
     (cond
       (not (empty? monsters-left-to-kill)) (format "You try to search but the %s tries to eat you..." (:name (first monsters-left-to-kill)))
       (= action "search") (list-treasure-in-room player-id action room-id)
+      (= action "search room") (list-treasure-in-room player-id action room-id)
+      (empty? monsters-mentioned) (format "You can't search the %s because there is no %s." (second action-list) (second action-list))
+      (not (empty? monsters-mentioned)) (list-treasure-from-monster monsters-mentioned)
+      :else "I don't know what you are searching for!"
       )
     )
   )
