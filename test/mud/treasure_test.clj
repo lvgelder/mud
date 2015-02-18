@@ -124,20 +124,6 @@
         )
       )
 
-(fact "Can't take treasure if there is a live monster in the room"
-      (def monster {:id 1 :name "vampire"})
-      (def player {:id 1 :treasure [] :monster []})
-      (def treasure {:id 43 :name "key" :description "A shiny key"})
-
-      (take-item-from-room 1 "take key" 1) => "You can't take it because the vampire tries to eat you."
-      (provided
-        (models/room-by-id 1) => {:id 1 :description "A room" :monster [monster]
-                                  :treasure [treasure]}
-        (models/player-by-id 1) => player
-        (models/collect-treasure 1 43) => irrelevant :times 0
-        )
-      )
-
 (fact "Can't take key if already have it"
       (def treasure {:id 43 :name "key" :description "A shiny key"})
       (def player {:id 1 :treasure [treasure] :monster []})
@@ -192,3 +178,12 @@
         (models/player-by-id 1) => {:id 1 :monster []}
         (models/room-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]})
         )
+
+(fact "if monster dead and monster not mentioned pass on to take item"
+      (take-what 1 "take key" 1) => irrelevant
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (models/room-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (take-item-from-room 1 "take key" 1) => irrelevant :times 1
+        )
+      )

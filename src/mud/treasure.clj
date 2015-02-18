@@ -58,12 +58,10 @@
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         treasure-to-take (first (core/treasure-mentioned action treasure))
-        monsters (:monster room)
         player (models/player-by-id player-id)
         ]
     (cond
       (empty? treasure-to-take) "You can't take that."
-      (core/monsters-left-to-kill? player monsters) (str (format "You can't take it because the %s tries to eat you." (:name (first monsters))))
       (core/already-taken-treasure? player treasure-to-take) "You already have that."
       (has-five-items-or-more player) "You already have 5 items. You need to drop something."
       :else (
@@ -94,9 +92,12 @@
 (defn take-what [player-id action room-id]
   (let [player (models/player-by-id player-id)
         room (models/room-by-id room-id)
-        unkilled-monsters (core/monsters-left-to-kill player (:monster room))]
+        unkilled-monsters (core/monsters-left-to-kill player (:monster room))
+        monsters-mentioned (core/monsters-mentioned action (:monster room))
+        ]
     (cond
       (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
+      (empty? monsters-mentioned) (take-item-from-room player-id action room-id)
       )
     )
   )
