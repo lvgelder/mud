@@ -54,24 +54,32 @@
   (>= (count (:treasure player)) 5)
   )
 
+(defn take-item [player treasure-to-take]
+  (cond
+    (empty? treasure-to-take) "You can't take that."
+    (core/already-taken-treasure? player treasure-to-take) "You already have that."
+    (has-five-items-or-more player) "You already have 5 items. You need to drop something."
+    :else (
+            do
+            (models/collect-treasure (:id player) (:id treasure-to-take))
+            (str (format "You have the %s." (:name treasure-to-take)))
+            )
+    )
+  )
+
 (defn take-item-from-room [player-id action room-id]
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         treasure-to-take (first (core/treasure-mentioned action treasure))
-        player (models/player-by-id player-id)
-        ]
-    (cond
-      (empty? treasure-to-take) "You can't take that."
-      (core/already-taken-treasure? player treasure-to-take) "You already have that."
-      (has-five-items-or-more player) "You already have 5 items. You need to drop something."
-      :else (
-              do
-              (models/collect-treasure player-id (:id treasure-to-take))
-              (str (format "You have the %s." (:name treasure-to-take)))
-              )
-      )
+        player (models/player-by-id player-id)]
+    (take-item player treasure-to-take)
     )
   )
+
+(defn take-item-from-monster [player action monsters-mentioned]
+  (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
+        treasure-to-take (first (core/treasure-mentioned action (:treasure monster)))]
+    (take-item player treasure-to-take)))
 
 (defn drop-item [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -98,6 +106,7 @@
     (cond
       (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
       (empty? monsters-mentioned) (take-item-from-room player-id action room-id)
+      (not (empty? monsters-mentioned)) (take-item-from-monster player action monsters-mentioned)
       )
     )
   )
