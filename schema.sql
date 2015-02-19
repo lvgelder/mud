@@ -28,7 +28,10 @@ CREATE TABLE monster (
 CREATE TABLE treasure (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
-  description TEXT NOT NULL);
+  description TEXT NOT NULL,
+  action_description TEXT,
+  hit_points INTEGER DEFAULT 0,
+  type TEXT);
 
 CREATE TABLE room_monster (
   room_id INTEGER REFERENCES room(id),
@@ -54,15 +57,15 @@ INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very o
 INSERT INTO exit(id, from_room, to_room, description, locked) VALUES (2, 2, 3, "Wooden door with a keyhole.", 1);
 INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
-INSERT INTO treasure (id, name, description) VALUES (1, 'key', 'A key that looks like it might fit the lock...');
+INSERT INTO treasure (id, name, description, type) VALUES (1, 'key', 'A key that looks like it might fit the lock...', 'key');
 INSERT INTO treasure (id, name, description) VALUES (2, 'book', 'An illustrated book of traffic lights around the world.');
 INSERT INTO treasure (id, name, description) VALUES (3, 'newspaper', "Today's edition of your favourite newspaper");
-INSERT INTO treasure (id, name, description) VALUES (4, 'coffee', 'A cup of hot coffee. Mmm that smells good.');
-INSERT INTO treasure (id, name, description) VALUES (5, 'scone', 'A scone with clotted cream and jam.');
-INSERT INTO treasure (id, name, description) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.');
+INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (4, 'coffee', 'A cup of hot coffee. Mmm that smells good.', 'drinkable', 'Everything is always better after a cup of coffee.', 10);
+INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (5, 'scone', 'A scone with clotted cream and jam.', 'edible', 'It tastes even better than you had hoped.', 50);
+INSERT INTO treasure (id, name, description, type) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.', 'wearable');
 INSERT INTO treasure (id, name, description) VALUES (7, 'pen', 'A fountain pen.');
 INSERT INTO treasure (id, name, description) VALUES (8, 'ink', 'A jar of ink.');
-INSERT INTO treasure (id, name, description) VALUES (9, 'yogurt', 'A tub of yogurt. Strawberry flavour.');
+INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (9, 'yogurt', 'A tub of yogurt. Strawberry flavour.', 'edible', 'Tasty, although you suspect the strawberry is artificial', 5);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (2, 1);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 2);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 3);
@@ -79,6 +82,7 @@ CREATE TABLE player (
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   hit_points INTEGER NOT NULL default 5,
+  max_hit_points INTEGER NOT NULL default 5,
   items INTEGER NOT NULL default 0,
   level INTEGER default 1
 );
@@ -90,10 +94,19 @@ CREATE TABLE room_player (
 
 CREATE TABLE player_treasure (
   treasure_id INTEGER REFERENCES treasure(id),
-  player_id INTEGER REFERENCES player(id)
-);
+  player_id INTEGER REFERENCES player(id));
 
 CREATE TABLE player_monster (
   monster_id INTEGER REFERENCES monster(id),
   player_id INTEGER REFERENCES player(id)
+);
+
+CREATE TABLE eaten_treasure (
+  treasure_id INTEGER references treasure(id),
+  player_id INTEGER references player(id)
+);
+
+CREATE TABLE worn_treasure (
+  treasure_id INTEGER references treasure(id),
+  player_id INTEGER references player(id)
 );

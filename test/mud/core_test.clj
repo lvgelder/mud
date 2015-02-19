@@ -73,3 +73,25 @@
 (fact "not trying to take key from room"
       (asked-from-room? "take key from fish") => nil
       )
+
+(fact "edible thing is edible"
+      (edible? {:id 5 :type "edible" :name "cupcake"}) => true
+      )
+
+(fact "non edible thing is not edible"
+      (edible? {:id 5 :name "cupcake"}) => false
+      )
+
+(fact "non edible thing is not edible"
+      (edible? {:id 5 :name "hat" :type "wearable"}) => false
+      )
+
+
+(fact "drinkable thing is drinkable"
+      (drinkable? {:id 5 :type "drinkable" :name "coffee"}) => true
+      )
+
+
+(fact "non drinkable thing is not drinkable"
+      (drinkable? {:id 5 :type "wearable" :name "hat"}) => false
+      )

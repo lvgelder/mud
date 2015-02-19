@@ -112,6 +112,22 @@
     )
   )
 
+(defn eat [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        treasure-mentioned (first (core/treasure-mentioned action (:treasure player)))]
+    (cond
+      (empty? treasure-mentioned) "I don't know what that is."
+      (not (core/edible? treasure-mentioned )) "You can't eat that."
+      :else
+      ( do
+        (models/remove-treasure-from-player player-id (:id treasure-mentioned))
+        (models/eat-treasure player-id (:id treasure-mentioned))
+        (format "You eat the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
+      ;restore hitpoints if applicable
+      )
+    )
+  )
+
 
 
 

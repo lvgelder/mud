@@ -66,3 +66,11 @@
     (and (seq-contains? action-list "from") (not (asked-from-room? action)))
     )
   )
+
+(defn edible? [treasure]
+  (= (:type treasure) "edible")
+  )
+
+(defn drinkable? [treasure]
+  (= (:type treasure) "drinkable")
+  )

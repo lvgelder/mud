@@ -233,3 +233,28 @@
         (take-item-from-room 1 "take key" 1) => irrelevant :times 0
         )
       )
+
+(fact "can't eat something you don't have"
+      (eat 1 "eat fish" 1) => "I don't know what that is."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure []}
+        )
+      )
+
+(fact "can't eat something non-edible"
+      (eat 1 "eat key" 1) => "You can't eat that."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 1 :name "key"}]}
+        )
+      )
+
+(fact "can eat edible treasure"
+      (def treasure [{:id 41 :name "cupcake" :type "edible" :action_description "The icing is over-sweet."}])
+
+      (eat 1 "eat cupcake" 1) => "You eat the cupcake. The icing is over-sweet."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure treasure}
+        (models/remove-treasure-from-player 1 41) => irrelevant :times 1
+        (models/eat-treasure 1 41) => irrelevant :times 1
+        )
+      )

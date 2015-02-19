@@ -7,7 +7,7 @@
        (sqlite3 {:db "mud.db"}))
 
 (defentity treasure
-           (entity-fields :id :name :description))
+           (entity-fields :id :name :description :type :action_description :hit_points))
 
 (defentity weapon
            (entity-fields :id :name :damage))
@@ -27,7 +27,7 @@
            (many-to-many player :room_player))
 
 (defentity player
-           (entity-fields :id :name :description :hit_points )
+           (entity-fields :id :name :description :hit_points :max_hit_points)
            (has-one weapon)
            (many-to-many room :room_player)
            (many-to-many treasure :player_treasure)
@@ -44,6 +44,9 @@
 
 (defentity player_treasure (entity-fields :player_id :treasure_id))
 
+(defentity eaten_treasure (entity-fields :player_id :treasure_id))
+
+(defentity worn_treasure (entity-fields :player_id :treasure_id))
 
 (defn all-players []
   (select player))
@@ -124,3 +127,11 @@
   (delete player_treasure
           (where {:player_id player_id :treasure_id treasure_id}))
   )
+
+(defn eat-treasure [player_id treasure_id]
+  (insert eaten_treasure
+          (values {:treasure_id treasure_id :player_id player_id})))
+
+(defn wear_treasure [player_id treasure_id]
+  (insert worn_treasure
+          (values {:treasure_id treasure_id :player_id player_id})))
