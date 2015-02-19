@@ -296,3 +296,28 @@
         (models/eat-treasure 1 41) => irrelevant :times 1
         )
       )
+
+(fact "can't drink something you don't have"
+      (drink 1 "drink fish" 1) => "I don't know what that is."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure []}
+        )
+      )
+
+(fact "can't drink something non-drinkable"
+      (drink 1 "drink key" 1) => "You can't drink that."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 1 :name "key"}]}
+        )
+      )
+
+(fact "can drink drinkable treasure"
+      (def treasure [{:id 41 :name "coffee" :type "drinkable" :action_description "Coffee is always fantastic."}])
+
+      (drink 1 "drink coffee" 1) => "You drink the coffee. Coffee is always fantastic."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure treasure}
+        (models/remove-treasure-from-player 1 41) => irrelevant :times 1
+        (models/eat-treasure 1 41) => irrelevant :times 1
+        )
+      )

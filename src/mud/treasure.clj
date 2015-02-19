@@ -133,6 +133,21 @@
     )
   )
 
+(defn drink [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        treasure-mentioned (first (core/treasure-mentioned action (:treasure player)))]
+    (cond
+      (empty? treasure-mentioned) "I don't know what that is."
+      (not (core/drinkable? treasure-mentioned)) "You can't drink that."
+      :else
+      ( do
+        (models/remove-treasure-from-player player-id (:id treasure-mentioned))
+        (models/eat-treasure player-id (:id treasure-mentioned))
+        (format "You drink the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
+      )
+    )
+  )
+
 
 
 
