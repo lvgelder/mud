@@ -1,5 +1,6 @@
 (ns mud.core
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [mud.models :as models]))
 
 (defn seq-contains? [coll target] (some #(= target %) coll))
 
@@ -37,6 +38,12 @@
 
 (defn treasure-left [player treasure]
   (filter #(not-already-taken-treasure player %) treasure)
+  )
+
+(defn treasure-not-eaten [player treasure]
+  (let [treasure-eaten (models/eaten-treasure-by-player-id (:id player))]
+    (filter #(not-contains-item-with-id treasure-eaten %) treasure)
+    )
   )
 
 (defn help [player-id action room-id]

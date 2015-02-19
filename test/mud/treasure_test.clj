@@ -51,26 +51,53 @@
 
 (fact "Typing 'search vampire' should search the vampire"
       (def monsters [{:id 1 :name "vampire"}])
+      (def player {:id 1 :treasure [] :monster [{:id 1 :name "vampire"}]})
 
       (search 1 "search vampire" 1) => irrelevant
       (provided
         (models/room-by-id 1) => {:id 1 :description "A room"
                                   :monster monsters :treasure [{:id 1 :description "A shiny key"}]}
-        (models/player-by-id 1) => {:id 1 :treasure [] :monster [{:id 1 :name "vampire"}]}
-        (list-treasure-from-monster monsters) => irrelevant :times 1))
+        (models/player-by-id 1) => player
+        (list-treasure-from-monster player monsters) => irrelevant :times 1))
 
 (fact "Searching the vampire should list its treasure"
       (def treasure [{:description "A cup of coffee"}{:description "A cookie"}])
-      (list-treasure-from-monster [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
+      (def player {:id 1 :treasure []})
+
+      (list-treasure-from-monster player [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
       (provided
         (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure treasure}
         )
       )
 
 (fact "Searching the vampire should 0 items if it has no treasure."
-      (list-treasure-from-monster [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
+      (def player {:id 1 :treasure []})
+
+      (list-treasure-from-monster player [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
       (provided
         (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure []}
+        )
+      )
+
+(fact "Searching the vampire should 0 items if you have eaten the items"
+      (def treasure [{:id 42 :name "soup"}])
+      (def player {:id 1 :treasure []})
+
+      (list-treasure-from-monster player [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
+      (provided
+        (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure treasure}
+        (models/eaten-treasure-by-player-id 1) => treasure
+        )
+      )
+
+(fact "Searching the vampire should 0 items if you have already taken the items"
+      (def treasure [{:id 42 :name "soup"}])
+      (def player {:id 1 :treasure treasure})
+
+      (list-treasure-from-monster player [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 0 items.</p> <ul></ul>"
+      (provided
+        (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure treasure}
+        (models/eaten-treasure-by-player-id 1) => []
         )
       )
 
@@ -92,6 +119,17 @@
                                   :monster []
                                   :treasure [{:id 43 :description "A shiny key"}{:id 44 :description "A newspaper"}]}
         (models/player-by-id 1) => {:id 1 :treasure [{:id 44 :description "A newspaper"}] :monster []}
+        )
+      )
+
+(fact "List all the treasure in the room that you don't already have or have eaten"
+      (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster []
+                                  :treasure [{:id 43 :description "A shiny key"}{:id 44 :description "A newspaper"}{:id 56 :name "cupcake"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 44 :description "A newspaper"}] :monster []}
+        (models/eaten-treasure-by-player-id 1) => [{:id 56 :name "cupcake"}]
         )
       )
 

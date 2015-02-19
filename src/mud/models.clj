@@ -135,3 +135,17 @@
 (defn wear_treasure [player_id treasure_id]
   (insert worn_treasure
           (values {:treasure_id treasure_id :player_id player_id})))
+
+(defn eaten-treasure-by-player-id [pl_id]
+  (select treasure
+                 (join eaten_treasure
+                       (= :eaten_treasure.treasure_id :id))
+                 (where {:eaten_treasure.player_id pl_id})
+                 ))
+
+(defn worn-treasure-by-player-id [pl_id]
+  (select treasure
+          (join worn_treasure
+                (= :worn_treasure.treasure_id :id))
+          (where {:worn_treasure.player_id pl_id})
+          ))

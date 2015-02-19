@@ -13,7 +13,8 @@
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         player (models/player-by-id player-id)
-        treasure-left-in-room (core/treasure-left player treasure)
+        treasure-not-eaten (core/treasure-not-eaten player treasure)
+        treasure-left-in-room (core/treasure-left player treasure-not-eaten)
         ]
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
               (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))
@@ -21,13 +22,17 @@
     )
   )
 
-(defn list-treasure-from-monster [monsters-mentioned]
+(defn list-treasure-from-monster [player monsters-mentioned]
   (defn treasure-item[name]
     (str "<li>" name "</li>")
     )
-  (let [monster (models/monster-by-id (:id (first monsters-mentioned))) treasure (:treasure monster)]
+  (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
+        treasure (:treasure monster)
+        treasure-not-eaten (core/treasure-not-eaten player treasure)
+        treasure-left (core/treasure-left player treasure-not-eaten)
+        ]
     (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
-            (:name (first monsters-mentioned)) (count treasure) (reduce str (map #(treasure-item (:description %)) treasure)))
+            (:name (first monsters-mentioned)) (count treasure-left) (reduce str (map #(treasure-item (:description %)) treasure-left)))
     )
   )
 
@@ -44,7 +49,7 @@
       (= action "search") (list-treasure-in-room player-id action room-id)
       (= action "search room") (list-treasure-in-room player-id action room-id)
       (empty? monsters-mentioned) (format "You can't search the %s because there is no %s." (second action-list) (second action-list))
-      (not (empty? monsters-mentioned)) (list-treasure-from-monster monsters-mentioned)
+      (not (empty? monsters-mentioned)) (list-treasure-from-monster player monsters-mentioned)
       :else "I don't know what you are searching for!"
       )
     )
