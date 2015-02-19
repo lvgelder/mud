@@ -148,6 +148,21 @@
     )
   )
 
+(defn wear [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        treasure-mentioned (first (core/treasure-mentioned action (:treasure player)))]
+    (cond
+      (empty? treasure-mentioned) "I don't know what that is."
+      (not (core/wearable? treasure-mentioned)) "You can't wear that."
+      (core/treasure-worn? player treasure-mentioned) "You are already wearing that."
+      :else
+      ( do
+        (models/wear_treasure player-id (:id treasure-mentioned))
+        (format "You put on the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
+      )
+    )
+  )
+
 
 
 

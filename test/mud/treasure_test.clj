@@ -321,3 +321,25 @@
         (models/eat-treasure 1 41) => irrelevant :times 1
         )
       )
+
+(fact "can't wear something you don't have"
+      (wear 1 "wear fish" 1) => "I don't know what that is."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure []}
+        )
+      )
+
+(fact "can't wear something you are already wearing"
+      (wear 1 "wear hat" 1) => "You are already wearing that."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 1 :name "hat" :type "wearable"}]}
+        (models/worn-treasure-by-player-id 1) => [{:id 1 :name "hat"}]
+        )
+      )
+
+(fact "can't wear something not wearable"
+      (wear 1 "wear fish" 1) => "You can't wear that."
+      (provided
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 1 :name "fish" :type "wet"}]}
+        )
+      )

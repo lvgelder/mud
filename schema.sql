@@ -62,7 +62,7 @@ INSERT INTO treasure (id, name, description) VALUES (2, 'book', 'An illustrated 
 INSERT INTO treasure (id, name, description) VALUES (3, 'newspaper', "Today's edition of your favourite newspaper");
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (4, 'coffee', 'A cup of hot coffee. Mmm that smells good.', 'drinkable', 'Everything is always better after a cup of coffee.', 10);
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (5, 'scone', 'A scone with clotted cream and jam.', 'edible', 'It tastes even better than you had hoped.', 50);
-INSERT INTO treasure (id, name, description, type) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.', 'wearable');
+INSERT INTO treasure (id, name, description, type, action_description) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.', 'wearable', 'Your ears are now warm.');
 INSERT INTO treasure (id, name, description) VALUES (7, 'pen', 'A fountain pen.');
 INSERT INTO treasure (id, name, description) VALUES (8, 'ink', 'A jar of ink.');
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (9, 'yogurt', 'A tub of yogurt. Strawberry flavour.', 'edible', 'Tasty, although you suspect the strawberry is artificial', 5);

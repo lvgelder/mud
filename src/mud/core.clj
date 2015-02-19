@@ -81,3 +81,13 @@
 (defn drinkable? [treasure]
   (= (:type treasure) "drinkable")
   )
+
+(defn wearable? [treasure]
+  (= (:type treasure) "wearable")
+  )
+
+(defn treasure-worn? [player treasure]
+  (let [treasure-worn (models/worn-treasure-by-player-id (:id player))]
+    (contains-item-with-id treasure-worn treasure)
+    )
+  )

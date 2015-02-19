@@ -1,8 +1,8 @@
 (ns mud.core-test
-  (:require [clojure.test :refer :all]
-            [midje.sweet :refer :all]
-            [mud.core :refer :all]
-            ))
+      (:require [clojure.test :refer :all]
+                [midje.sweet :refer :all]
+                [mud.core :refer :all]
+                [mud.models :as models]))
 
 (fact "return only monsters who are not killed"
       (def player {:id 3 :monster [{:id 42 :name "vampire"}]})
@@ -94,4 +94,21 @@
 
 (fact "non drinkable thing is not drinkable"
       (drinkable? {:id 5 :type "wearable" :name "hat"}) => false
+      )
+
+(fact "wearable thing is wearable"
+      (wearable? {:id 5 :type "wearable" :name "hat"}) => true
+      )
+
+(fact "non wearable thing is not wearable"
+      (wearable? {:id 5 :type "drinkable" :name "coffee"}) => false
+      )
+
+(fact "worn treasure is worn"
+      (def treasure {:id 1 :type "wearable" :name "hat"})
+      (def player {:id 1 :name "bob" :treasure [treasure]})
+      (treasure-worn? player treasure) => true
+      (provided
+            (models/worn-treasure-by-player-id 1) => [treasure]
+            )
       )
