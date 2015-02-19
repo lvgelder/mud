@@ -105,7 +105,8 @@
         ]
     (cond
       (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
-      (empty? monsters-mentioned) (take-item-from-room player-id action room-id)
+      (and (empty? monsters-mentioned) (core/used-from-but-not-for-room? action)) "You can't take that."
+      (or (empty? monsters-mentioned) (core/asked-from-room? action)) (take-item-from-room player-id action room-id)
       (not (empty? monsters-mentioned)) (take-item-from-monster player action monsters-mentioned)
       )
     )

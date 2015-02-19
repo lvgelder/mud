@@ -188,6 +188,15 @@
         )
       )
 
+(fact "if monster dead and room mentioned pass on to take item from room"
+      (take-what 1 "take key from room" 1) => irrelevant
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (models/room-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (take-item-from-room 1 "take key from room" 1) => irrelevant :times 1
+        )
+      )
+
 (fact "if monster dead and monster mentioned pass on to take item from monster"
       (def player {:id 1 :monster [{:id 1 :name "vampire"}]})
       (def monsters [{:id 1 :name "vampire"}])
@@ -204,6 +213,23 @@
       (def player {:id 1})
       (def monsters-mentioned [{:id 48 :name "vampire"}])
 
-      (take-item-from-monster player "take key from monster" monsters-mentioned) => "You can't take that."
+      (take-item-from-monster player "take key from vampire" monsters-mentioned) => "You can't take that."
       (provided
         (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure []}))
+
+(fact "Can take something from monster if there is treasure"
+      (def player {:id 1 :treasure []})
+      (def monsters-mentioned [{:id 48 :name "vampire"}])
+
+      (take-item-from-monster player "take cupcake from vampire" monsters-mentioned) => "You have the cupcake."
+      (provided
+        (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure [{:id 3 :name "cupcake"}]}))
+
+(fact "if monster dead and say take from but not name of monster say you can't take that"
+      (take-what 1 "take key from fish" 1) => "You can't take that."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (models/room-by-id 1) => {:id 1 :monster [{:id 1 :name "vampire"}]}
+        (take-item-from-room 1 "take key" 1) => irrelevant :times 0
+        )
+      )

@@ -54,3 +54,15 @@
     (filter #(seq-contains? action-list (:name %)) monsters)
     )
   )
+
+(defn asked-from-room?[action]
+  (let [action-list (str/split action #"\s+")]
+    (and (seq-contains? action-list "from") (seq-contains? action-list "room"))
+    )
+  )
+
+(defn used-from-but-not-for-room? [action]
+  (let [action-list (str/split action #"\s+")]
+    (and (seq-contains? action-list "from") (not (asked-from-room? action)))
+    )
+  )

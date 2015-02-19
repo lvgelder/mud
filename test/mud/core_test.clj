@@ -54,4 +54,22 @@
       (items-with-name [{:name "fish"} {:name "banana"}] "penguin") => []
       )
 
+(fact "can't take key from fish"
+      (used-from-but-not-for-room? "take key from fish") => true
+      )
 
+(fact "trying to take key from room"
+      (used-from-but-not-for-room? "take key from room") => false
+      )
+
+(fact "not trying to take key from room"
+      (used-from-but-not-for-room? "take key") => nil
+      )
+
+(fact "also trying to take key from room"
+      (asked-from-room? "take key from room") => true
+      )
+
+(fact "not trying to take key from room"
+      (asked-from-room? "take key from fish") => nil
+      )
