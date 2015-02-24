@@ -98,8 +98,7 @@ CREATE TABLE player_treasure (
 
 CREATE TABLE player_monster (
   monster_id INTEGER REFERENCES monster(id),
-  player_id INTEGER REFERENCES player(id)
-);
+  player_id INTEGER REFERENCES player(id));
 
 CREATE TABLE eaten_treasure (
   treasure_id INTEGER references treasure(id),

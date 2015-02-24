@@ -42,12 +42,50 @@
         )
       )
 
-(fact "Combat kills a monster"
-      (def player {:id 1 :monster []})
-      (def monster {:id 1 :name "vampire"})
+;(fact "Combat kills a monster"
+;      (def player {:id 1 :monster []})
+;      (def monster {:id 1 :name "vampire"})
+;
+;      (fight player "fight vampire" monster) => irrelevant
+;      (provided
+;        (win 1 1) => irrelevant :times 1
+;        )
+;      )
+
+;(fact "hitting a vampire with a weapon does damage based on the weapon"
+;      (def player {:id 1 :weapon {:id 1 :damage 2}})
+;      (def monster {:id 2 :hit_points 5})
+;      (hit-creature player monster) => {:id 2 :hit_points 3}
+;      (provided
+;        (rand-int 2) => 2
+;        )
+;      )
+
+(fact "if you are reduced to less than 0 hit points you lose"
+      (def player {:hit_points 1 :id 1 :weapon {:id 1 :damage 2}})
+      (def monster {:id 2 :hit_points 5 :weapon {:id 2 :damage 5}})
 
       (fight player "fight vampire" monster) => irrelevant
       (provided
-        (win 1 1) => irrelevant :times 1
+        (models/player-with-weapon 1) => player
+        (models/monster-with-weapon 2) => monster
+        (rand-int 2) => 2
+        (rand-int 5) => 5
+        (lose {:hit_points -4 :id 1 :weapon {:id 1 :damage 2}} {:id 2 :hit_points 3 :weapon {:id 2 :damage 5}}) => irrelevant :times 1
+        )
+      )
+
+
+(fact "if monster is reduced to less than 0 hit points you win"
+      (def player {:hit_points 5 :id 1 :weapon {:id 1 :damage 5}})
+      (def monster {:id 2 :hit_points 5 :weapon {:id 2 :damage 2}})
+
+      (fight player "fight vampire" monster) => irrelevant
+      (provided
+        (models/player-with-weapon 1) => player
+        (models/monster-with-weapon 2) => monster
+        (rand-int 2) => 2
+        (rand-int 5) => 5
+        (win {:hit_points 3 :id 1 :weapon {:id 1 :damage 5}} {:id 2 :hit_points 0 :weapon {:id 2 :damage 2}}) => irrelevant :times 1
         )
       )

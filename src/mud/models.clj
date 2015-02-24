@@ -95,8 +95,14 @@
 (defn player-by-id [id]
   (first (select player (with treasure) (with monster) (where {:id id}))))
 
+(defn player-with-weapon [id]
+  (first (select player (with weapon) (where {:id id}))))
+
 (defn monster-by-id [id]
   (first (select monster (with treasure) (where {:id id}))))
+
+(defn monster-with-weapon [id]
+  (first (select monster (with weapon) (where {:id id}))))
 
 (defn room-by-player-id [pl_id]
   (first (select room
