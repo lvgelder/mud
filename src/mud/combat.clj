@@ -7,12 +7,14 @@
 
 (defn win [player monster]
   do
+  (models/reset-fight-in-progress (:id player))
   (models/set-hit-points (:id player) (:hit_points player))
   (models/kill-monster (:id player) (:id monster))
   (format "You killed the %s!" (:name monster)))
 
 (defn lose [player monster]
   do
+  (models/reset-fight-in-progress (:id player))
   (models/remove-all-treasure-from-player (:id player))
   (models/remove-all-monsters-from-player (:id player))
   (models/set-hit-points (:id player) 5)
@@ -27,16 +29,35 @@
 (defn hit-creature [attacker, attackee]
   (assoc attackee :hit_points (hit attackee (:weapon attacker))))
 
+(defn current-monster-hitpoints [player-id monster]
+  (let [fight-in-progress (models/fight_in_progress player-id (:id monster))]
+    (if (not-empty fight-in-progress)
+      (assoc monster :hit_points (:monster_hit_points fight-in-progress))
+      monster
+      )
+    )
+  )
+
+(defn update-hit-points [player monster]
+  (models/set-hit-points (:id player) (:hit_points player))
+  (models/reset-fight-in-progress (:id player))
+  (models/update_fight_in_progress (:id player) (:id monster) (:hit_points monster))
+  )
+
 (defn fight [player action monster]
   (let [player-with-weapon (models/player-with-weapon (:id player))
         monster-with-weapon (models/monster-with-weapon (:id monster))
-        player-hit (hit-creature monster-with-weapon player-with-weapon)
-        monster-hit (hit-creature player-with-weapon monster-with-weapon)
+        current-monster-hitpoints (current-monster-hitpoints (:id player) monster-with-weapon)
+        player-hit (hit-creature current-monster-hitpoints player-with-weapon)
+        monster-hit (hit-creature player-with-weapon current-monster-hitpoints)
         ]
     (cond
       (<= (:hit_points player-hit) 0) (lose player-hit monster-hit)
       (<= (:hit_points monster-hit) 0) (win player-hit monster-hit)
-      :else (format "You swing at the %s with your %s and hit, but it is still standing. And looking angry now." (:name monster) (:name (:weapon player-with-weapon))))))
+      :else
+      ( do
+        (update-hit-points player-hit monster-hit)
+        (format "You swing at the %s with your %s and hit, but it is still standing. And looking angry now." (:name monster) (:name (:weapon player-with-weapon)))))))
 
 (defn fight-what [player-id action room-id]
   (let [monsters (models/monster-by-room room-id)

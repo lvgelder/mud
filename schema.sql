@@ -100,6 +100,12 @@ CREATE TABLE player_monster (
   monster_id INTEGER REFERENCES monster(id),
   player_id INTEGER REFERENCES player(id));
 
+ CREATE TABLE fight_in_progress(
+   monster_id INTEGER REFERENCES monster(id),
+   player_id INTEGER REFERENCES player(id),
+   monster_hit_points INTEGER
+ );
+
 CREATE TABLE eaten_treasure (
   treasure_id INTEGER references treasure(id),
   player_id INTEGER references player(id)

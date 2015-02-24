@@ -48,6 +48,8 @@
 
 (defentity worn_treasure (entity-fields :player_id :treasure_id))
 
+(defentity fight_in_progress (entity-fields :player_id :monster_id :monster_hit_points))
+
 (defn all-players []
   (select player))
 
@@ -178,4 +180,18 @@
   (delete player_monster
           (where {:player_id player_id}))
   )
+
+(defn reset-fight-in-progress [player_id]
+  (delete fight_in_progress
+          (where {:player_id player_id}))
+  )
+
+(defn fight_in_progress [player_id monster_id]
+  (first (select fight_in_progress
+                 (where {:player_id player_id :monster_id monster_id})
+                 )))
+
+(defn update_fight_in_progress [player_id monster_id monster_hit_points]
+  (insert fight_in_progress
+          (values {:monster_hit_points monster_hit_points :player_id player_id :monster_id monster_id})))
 
