@@ -70,6 +70,18 @@
           (where {:player_id player_id}))
   )
 
+(defn set-hit-points [player_id hit_points]
+  (update player
+          (set-fields {:hit_points hit_points})
+          (where {:player_id player_id}))
+  )
+
+(defn set-max-hit-points [player_id hit_points]
+  (update player
+          (set-fields {:max_hit_points hit_points})
+          (where {:player_id player_id}))
+  )
+
 (defn kill-monster [player_id monster_id]
   (insert player_monster
           (values {:monster_id monster_id :player_id player_id})))
@@ -149,3 +161,15 @@
                 (= :worn_treasure.treasure_id :id))
           (where {:worn_treasure.player_id pl_id})
           ))
+
+
+(defn remove-all-treasure-from-player [player_id]
+  (delete player_treasure
+          (where {:player_id player_id}))
+  )
+
+(defn remove-all-monsters-from-player [player_id]
+  (delete player_monster
+          (where {:player_id player_id}))
+  )
+
