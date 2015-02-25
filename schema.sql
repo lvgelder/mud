@@ -52,8 +52,8 @@ CREATE TABLE room_treasure (
   treasure_id INTEGER REFERENCES treasure(id)
 );
 
-INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 1);
-INSERT INTO weapon (id, name, damage) VALUES (2, 'teeth', 1);
+INSERT INTO weapon (id, name, damage) VALUES (1, 'fists', 3);
+INSERT INTO weapon (id, name, damage) VALUES (2, 'teeth', 3);
 INSERT INTO room (id, description) VALUES (1, "An empty room. Quite boring.");
 INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings everywhere. But you don't notice that because as soon as you walk in a vampire tries to eat you...");
 INSERT INTO room (id, description) VALUES(3, "A library with books all up to the ceilings and comfy sofas.");
