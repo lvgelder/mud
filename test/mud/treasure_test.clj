@@ -286,16 +286,26 @@
         )
       )
 
-(fact "can eat edible treasure"
-      (def treasure [{:id 41 :name "cupcake" :type "edible" :action_description "The icing is over-sweet."}])
+(fact "can eat edible treasure - doesn't set hit points if you haven't lost any"
+      (def treasure [{:id 41 :name "cupcake" :type "edible" :hit_points 5 :action_description "The icing is over-sweet."}])
 
       (eat 1 "eat cupcake" 1) => "You eat the cupcake. The icing is over-sweet."
       (provided
-        (models/player-by-id 1) => {:id 1 :treasure treasure}
+        (models/player-by-id 1) => {:id 1 :hit_points 5 :max_hit_points 5 :treasure treasure}
         (models/remove-treasure-from-player 1 41) => irrelevant :times 1
         (models/eat-treasure 1 41) => irrelevant :times 1
         )
       )
+
+(fact "edible treasure restores hit points if you have lost some"
+      (def treasure [{:id 41 :name "cupcake" :type "edible" :hit_points 5 :action_description "The icing is over-sweet."}])
+
+      (eat 1 "eat cupcake" 1) => "You eat the cupcake. The icing is over-sweet."
+      (provided
+        (models/player-by-id 1) => {:id 1 :hit_points 1 :max_hit_points 5 :treasure treasure}
+        (models/remove-treasure-from-player 1 41) => irrelevant :times 1
+        (models/eat-treasure 1 41) => irrelevant :times 1
+        (models/set-hit-points 1 5) => irrelevant :times 1))
 
 (fact "can't drink something you don't have"
       (drink 1 "drink fish" 1) => "I don't know what that is."
@@ -312,11 +322,11 @@
       )
 
 (fact "can drink drinkable treasure"
-      (def treasure [{:id 41 :name "coffee" :type "drinkable" :action_description "Coffee is always fantastic."}])
+      (def treasure [{:id 41 :name "coffee" :type "drinkable" :action_description "Coffee is always fantastic." :hit_points 5}])
 
       (drink 1 "drink coffee" 1) => "You drink the coffee. Coffee is always fantastic."
       (provided
-        (models/player-by-id 1) => {:id 1 :treasure treasure}
+        (models/player-by-id 1) => {:id 1 :hit_points 5 :max_hit_points 5 :treasure treasure}
         (models/remove-treasure-from-player 1 41) => irrelevant :times 1
         (models/eat-treasure 1 41) => irrelevant :times 1
         )
@@ -343,3 +353,27 @@
         (models/player-by-id 1) => {:id 1 :treasure [{:id 1 :name "fish" :type "wet"}]}
         )
       )
+
+(fact "restore hit points does nothing if you are at full hitpoints"
+      (def treasure {:id 41 :name "cupcake" :type "edible" :hit_points 5 :action_description "The icing is over-sweet."})
+      (def player {:id 1 :max_hit_points 5 :hit_points 5})
+
+      (restore-hit-points player treasure) => irrelevant
+      (provided
+        (models/set-hit-points 1 5) => irrelevant :times 0))
+
+(fact "restore hit points sets you to max hit points if that is less than the treasure gives you"
+      (def treasure {:id 41 :name "cupcake" :type "edible" :hit_points 50 :action_description "The icing is over-sweet."})
+      (def player {:id 1 :max_hit_points 5 :hit_points 1})
+
+      (restore-hit-points player treasure) => irrelevant
+      (provided
+        (models/set-hit-points 1 5) => irrelevant :times 1))
+
+(fact "restore hit points adds treasure hit points if that is less than max hit points"
+      (def treasure {:id 41 :name "cupcake" :type "edible" :hit_points 3 :action_description "The icing is over-sweet."})
+      (def player {:id 1 :max_hit_points 5 :hit_points 1})
+
+      (restore-hit-points player treasure) => irrelevant
+      (provided
+        (models/set-hit-points 1 4) => irrelevant :times 1))

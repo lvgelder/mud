@@ -7,8 +7,7 @@
 (defn list-treasure-in-room [player-id action room-id]
 
   (defn treasure-item[name]
-    (str "<li>" name "</li>")
-    )
+    (str "<li>" name "</li>"))
 
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
@@ -17,10 +16,7 @@
         treasure-left-in-room (core/treasure-left player treasure-not-eaten)
         ]
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
-              (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))
-
-    )
-  )
+              (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))))
 
 (defn list-treasure-from-monster [player monsters-mentioned]
   (defn treasure-item[name]
@@ -32,9 +28,7 @@
         treasure-left (core/treasure-left player treasure-not-eaten)
         ]
     (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
-            (:name (first monsters-mentioned)) (count treasure-left) (reduce str (map #(treasure-item (:description %)) treasure-left)))
-    )
-  )
+            (:name (first monsters-mentioned)) (count treasure-left) (reduce str (map #(treasure-item (:description %)) treasure-left)))))
 
 (defn search [player-id action room-id]
   (let [room (models/room-by-id room-id)
@@ -50,14 +44,10 @@
       (= action "search room") (list-treasure-in-room player-id action room-id)
       (empty? monsters-mentioned) (format "You can't search the %s because there is no %s." (second action-list) (second action-list))
       (not (empty? monsters-mentioned)) (list-treasure-from-monster player monsters-mentioned)
-      :else "I don't know what you are searching for!"
-      )
-    )
-  )
+      :else "I don't know what you are searching for!")))
 
 (defn has-five-items-or-more[player]
-  (>= (count (:treasure player)) 5)
-  )
+  (>= (count (:treasure player)) 5))
 
 (defn take-item [player treasure-to-take]
   (cond
@@ -67,19 +57,14 @@
     :else (
             do
             (models/collect-treasure (:id player) (:id treasure-to-take))
-            (str (format "You have the %s." (:name treasure-to-take)))
-            )
-    )
-  )
+            (str (format "You have the %s." (:name treasure-to-take))))))
 
 (defn take-item-from-room [player-id action room-id]
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         treasure-to-take (first (core/treasure-mentioned action treasure))
         player (models/player-by-id player-id)]
-    (take-item player treasure-to-take)
-    )
-  )
+    (take-item player treasure-to-take)))
 
 (defn take-item-from-monster [player action monsters-mentioned]
   (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
@@ -94,28 +79,25 @@
       "You don't have that."
       (do
         (models/remove-treasure-from-player (:id player) (:id (first droppable-treasure)))
-        (str (format "You put the %s down." (:name (first droppable-treasure))))
-        )
-
-      )
-
-    )
-  )
+        (str (format "You put the %s down." (:name (first droppable-treasure))))))))
 
 (defn take-what [player-id action room-id]
   (let [player (models/player-by-id player-id)
         room (models/room-by-id room-id)
         unkilled-monsters (core/monsters-left-to-kill player (:monster room))
-        monsters-mentioned (core/monsters-mentioned action (:monster room))
-        ]
+        monsters-mentioned (core/monsters-mentioned action (:monster room))]
     (cond
       (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
       (and (empty? monsters-mentioned) (core/used-from-but-not-for-room? action)) "You can't take that."
       (or (empty? monsters-mentioned) (core/asked-from-room? action)) (take-item-from-room player-id action room-id)
-      (not (empty? monsters-mentioned)) (take-item-from-monster player action monsters-mentioned)
-      )
-    )
-  )
+      (not (empty? monsters-mentioned)) (take-item-from-monster player action monsters-mentioned))))
+
+(defn restore-hit-points [player treasure]
+  (if (< (:hit_points player) (:max_hit_points player))
+    (let [new-hit-points (+ (:hit_points player) (:hit_points treasure))]
+      (if (> new-hit-points (:max_hit_points player))
+        (models/set-hit-points (:id player) (:max_hit_points player))
+        (models/set-hit-points (:id player) new-hit-points)))))
 
 (defn eat [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -127,11 +109,8 @@
       ( do
         (models/remove-treasure-from-player player-id (:id treasure-mentioned))
         (models/eat-treasure player-id (:id treasure-mentioned))
-        (format "You eat the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
-      ;restore hitpoints if applicable
-      )
-    )
-  )
+        (restore-hit-points player treasure-mentioned)
+        (format "You eat the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned ))))))
 
 (defn drink [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -143,10 +122,8 @@
       ( do
         (models/remove-treasure-from-player player-id (:id treasure-mentioned))
         (models/eat-treasure player-id (:id treasure-mentioned))
-        (format "You drink the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
-      )
-    )
-  )
+        (restore-hit-points player treasure-mentioned)
+        (format "You drink the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned ))))))
 
 (defn wear [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -158,10 +135,7 @@
       :else
       ( do
         (models/wear_treasure player-id (:id treasure-mentioned))
-        (format "You put on the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned )))
-      )
-    )
-  )
+        (format "You put on the %s. %s" (:name treasure-mentioned) (:action_description treasure-mentioned ))))))
 
 
 
