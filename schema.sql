@@ -19,7 +19,6 @@ CREATE TABLE weapon (
 
 CREATE TABLE monster (
   id INTEGER PRIMARY KEY,
-  weapon_id INTEGER REFERENCES weapon(id) NOT NULL,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   hit_points INTEGER NOT NULL
@@ -36,6 +35,11 @@ CREATE TABLE treasure (
 CREATE TABLE room_monster (
   room_id INTEGER REFERENCES room(id),
   monster_id INTEGER REFERENCES monster(id)
+);
+
+CREATE TABLE monster_weapon (
+ monster_id INTEGER REFERENCES monster(id),
+ weapon_id INTEGER REFERENCES weapon(id)
 );
 
 CREATE TABLE monster_treasure (
@@ -55,7 +59,8 @@ INSERT INTO room (id, description) VALUES (2, "Lovely and ornate, with carvings 
 INSERT INTO room (id, description) VALUES(3, "A library with books all up to the ceilings and comfy sofas.");
 INSERT INTO exit(id, from_room, to_room, description) VALUES (1, 1, 2, "A very ordinary door. With a doorknob");
 INSERT INTO exit(id, from_room, to_room, description, locked) VALUES (2, 2, 3, "Wooden door with a keyhole.", 1);
-INSERT INTO monster(id, weapon_id, name, description, hit_points) VALUES (1, 2, "vampire", "pointy teeth", 1);
+INSERT INTO monster(id, name, description, hit_points) VALUES (1, "vampire", "pointy teeth", 2);
+INSERT INTO monster_weapon (monster_id, weapon_id) VALUES (1, 2);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
 INSERT INTO treasure (id, name, description, type) VALUES (1, 'key', 'A key that looks like it might fit the lock...', 'key');
 INSERT INTO treasure (id, name, description) VALUES (2, 'book', 'An illustrated book of traffic lights around the world.');
@@ -78,13 +83,17 @@ INSERT INTO monster_treasure(monster_id, treasure_id) VALUES (1, 9);
 
 CREATE TABLE player (
   id INTEGER PRIMARY KEY,
-  weapon_id INTEGER REFERENCES weapon(id) NOT NULL default 1,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   hit_points INTEGER NOT NULL default 5,
   max_hit_points INTEGER NOT NULL default 5,
   items INTEGER NOT NULL default 0,
   level INTEGER default 1
+);
+
+CREATE TABLE player_weapon(
+  player_id INTEGER REFERENCES player(id),
+  weapon_id INTEGER REFERENCES weapon(id)
 );
 
 CREATE TABLE room_player (

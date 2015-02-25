@@ -9,15 +9,15 @@
 (defentity treasure
            (entity-fields :id :name :description :type :action_description :hit_points))
 
+(declare player room monster)
+
 (defentity weapon
            (entity-fields :id :name :damage))
 
-(declare player room)
-
 (defentity monster
            (entity-fields :id :name :description :hit_points)
-           (has-one weapon)
            (many-to-many treasure :monster_treasure)
+           (many-to-many weapon :monster_weapon)
            (many-to-many room :room_monster))
 
 (defentity room
@@ -28,10 +28,10 @@
 
 (defentity player
            (entity-fields :id :name :description :hit_points :max_hit_points)
-           (has-one weapon)
            (many-to-many room :room_player)
            (many-to-many treasure :player_treasure)
            (many-to-many monster :player_monster)
+           (many-to-many weapon :player_weapon)
            )
 
 (defentity exit (entity-fields :id :from_room :to_room :description :locked))
@@ -50,6 +50,10 @@
 
 (defentity fight_in_progress (entity-fields :player_id :monster_id :monster_hit_points))
 
+(defentity player_weapon (entity-fields :player_id :weapon_id))
+
+(defentity monster_weapon (entity-fields :monster_id :weapon_id))
+
 (defn all-players []
   (select player))
 
@@ -66,6 +70,11 @@
           (values {:room_id room_id :player_id player_id}))
   )
 
+(defn initialize-player-weapon [player_id]
+  (insert player_weapon
+          (values {:weapon_id 1 :player_id player_id}))
+  )
+
 (defn set-player-room [player_id room_id]
   (update room_player
           (set-fields {:room_id room_id})
@@ -75,13 +84,13 @@
 (defn set-hit-points [player_id hit_points]
   (update player
           (set-fields {:hit_points hit_points})
-          (where {:player_id player_id}))
+          (where {:id player_id}))
   )
 
 (defn set-max-hit-points [player_id hit_points]
   (update player
           (set-fields {:max_hit_points hit_points})
-          (where {:player_id player_id}))
+          (where {:id player_id}))
   )
 
 (defn kill-monster [player_id monster_id]
@@ -186,12 +195,20 @@
           (where {:player_id player_id}))
   )
 
-(defn fight_in_progress [player_id monster_id]
-  (first (select fight_in_progress
+(defn select_fight_in_progress [player_id monster_id]
+  (select fight_in_progress
                  (where {:player_id player_id :monster_id monster_id})
-                 )))
+                 ))
 
-(defn update_fight_in_progress [player_id monster_id monster_hit_points]
+(defn insert_fight_in_progress [player_id monster_id monster_hit_points]
   (insert fight_in_progress
           (values {:monster_hit_points monster_hit_points :player_id player_id :monster_id monster_id})))
+
+(defn update-fight-in-progress [player_id monster_id monster_hit_points]
+  (update fight_in_progress
+          (set-fields {:monster_hit_points monster_hit_points})
+          (where {:player_id player_id :monster_id monster_id}))
+  )
+
+
 

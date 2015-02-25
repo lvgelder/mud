@@ -58,6 +58,7 @@
   (models/create-player params)
   (let [pl (models/player-by-name (:name params))]
     (models/initialize-player-room (:id pl) 1)
+    (models/initialize-player-weapon (:id pl))
     )
   (response/redirect-after-post "/entrance"))
 
@@ -81,6 +82,7 @@
 
      ]
     [:div (str (format "monsters killed %s" (count (:monster pl))))]
+    [:div (str (format "hit points: %s" (:hit_points pl)))]
 
     [:hr]
 
