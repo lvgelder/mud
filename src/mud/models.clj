@@ -3,8 +3,16 @@
   (:use korma.db korma.core)
   (:require [clojure.string :as string]))
 
-(defdb mud ;;(2)
-       (sqlite3 {:db "mud.db"}))
+;(defdb mud ;;(2)
+;       (sqlite3 {:db "mud.db"}))
+
+(defdb mud (postgres {:db "mud"
+                       :user "muduser"
+                       :password ""
+                       ;; optional keys
+                       :host "localhost"
+                       :port "5432"
+                       :delimiters ""}))
 
 (defentity treasure
            (entity-fields :id :name :description :type :action_description :hit_points))

@@ -116,14 +116,18 @@
     )
   )
 
-(defn player [id]
-  (let [pl (models/player-by-id id) room (models/room-by-player-id id)]
+(defn player [id-str]
+  (let [id (read-string id-str) pl (models/player-by-id id) room (models/room-by-player-id id)]
     (player-page pl room nil)
     )
   )
 
 (defn action [params]
-  (let [action (brain/action (:player_id params) (:action params) (:room_id params)) pl (models/player-by-id (:player_id params)) room (models/room-by-player-id (:player_id params))]
+  (let [player-id (read-string (:player_id params))
+        room-id (read-string (:room_id params))
+        action (brain/action player-id (:action params) room-id)
+        pl (models/player-by-id player-id)
+        room (models/room-by-player-id player-id)]
     (player-page pl room action)
     )
   )
