@@ -11,3 +11,4 @@ pom.xml.asc
 /.idea
 mud.db
 notes.txt
+profiles.clj

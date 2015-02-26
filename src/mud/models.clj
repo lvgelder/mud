@@ -1,17 +1,34 @@
 (ns mud.models
   (:refer-clojure) ;;(1)
   (:use korma.db korma.core)
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string])
+  (:require [environ.core :refer [env]])
+  )
+
+
+(def database-name
+  (env :database-name))
+
+(def database-username
+  (env :database-username))
+
+(def database-password
+  (env :database-password))
+
+(def database-host
+  (env :database-host))
+
+(def database-port
+  (env :database-port))
 
 ;(defdb mud ;;(2)
 ;       (sqlite3 {:db "mud.db"}))
 
-(defdb mud (postgres {:db "mud"
-                       :user "muduser"
-                       :password ""
-                       ;; optional keys
-                       :host "localhost"
-                       :port "5432"
+(defdb mud (postgres {:db database-name
+                       :user database-username
+                       :password database-password
+                       :host database-host
+                       :port database-port
                        :delimiters ""}))
 
 (defentity treasure
