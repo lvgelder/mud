@@ -177,14 +177,14 @@
 
 (fact "can't take treasure if you already have 5 items"
       (def treasure {:id 43 :name "key" :description "A shiny key"})
-      (def player {:id 1 :treasure [{:id 1}{:id 2}{:id 3}{:id 4}{:id 5}] :monster []})
+      (def player {:id 101 :treasure [{:id 1}{:id 2}{:id 3}{:id 4}{:id 5}] :monster []})
 
-      (take-item-from-room 1 "take key" 1) => "You already have 5 items. You need to drop something."
+      (take-item-from-room 101 "take key" 1) => "You already have 5 items. You need to drop something."
       (provided
         (models/room-by-id 1) => {:id 1 :description "A room" :monster []
                                   :treasure [treasure]}
-        (models/player-by-id 1) => player
-        (models/collect-treasure 1 43) => irrelevant :times 0
+        (models/player-by-id 101) => player
+        (models/collect-treasure 101 43) => irrelevant :times 0
         )
       )
 
@@ -261,7 +261,8 @@
 
       (take-item-from-monster player "take cupcake from vampire" monsters-mentioned) => "You have the cupcake."
       (provided
-        (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure [{:id 3 :name "cupcake"}]}))
+        (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure [{:id 3 :name "cupcake"}]}
+        (models/collect-treasure 1 3) => irrelevant :times 1))
 
 (fact "if monster dead and say take from but not name of monster say you can't take that"
       (take-what 1 "take key from fish" 1) => "You can't take that."
