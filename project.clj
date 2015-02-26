@@ -18,4 +18,13 @@
   {:test {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]
                         [midje "1.5.0"]
-                        [environ "1.0.0"]]}})
+                        [environ "1.0.0"]]}
+   :production {:dependencies [[org.clojure/clojure "1.6.0"]
+                               [compojure "1.3.1"]
+                               [korma "0.4.0"]
+                               [org.xerial/sqlite-jdbc "3.7.2"]
+                               [org.postgresql/postgresql "9.2-1002-jdbc4"]
+                               [hiccup "1.0.5"]
+                               [valip "0.2.0"]
+                               [environ "1.0.0"]
+                               [ring/ring-defaults "0.1.2"]]}})
