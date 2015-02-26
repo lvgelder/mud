@@ -40,19 +40,22 @@
   (base-page
     "New Hero"
 
-    [:h1 "Create a new hero"]
 
     (form-to
-      {:class :form-horizontal}
+      {:class "form-horizontal"}
       [:post "/players"]
-      [:div
-       "Name: "
-       (text-field :name)
-       ]
-      [:div "Description:"
-       (text-field :description)
-       ]
-      (submit-button {:class "btn btn-primary"} "Create Hero"))))
+      [:legend "Create a new hero"]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Name"]
+       [:div {:class "controls"}
+        (text-field :name)]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Description"]
+       [:div {:class "controls"}
+       (text-field :description)]]
+      [:div {:class "control-group"}
+       [:div {:class "controls"}
+       (submit-button {:class "btn btn-primary"} "Create Hero")]])))
 
 (defn make-player [params]
   (models/create-player params)
@@ -104,13 +107,13 @@
      ]
 
     (form-to
-      {:class :form-horizontal}
+      {:class "form-horizontal"}
       [:post "/actions"]
-      [:div
-       (text-field :action)
+      [:div {:class "form-group"}
+       (text-field {:class "input-large"} :action)
        (hidden-field :player_id (:id pl))
        (hidden-field :room_id (:id room))
-       (submit-button {:class "btn btn-primary"} "What do you want to do?")
+       [:span {:style "padding: 10px"} (submit-button {:class "btn btn-primary pad-left"} "What do you want to do?")]
        ]
       )
     )
