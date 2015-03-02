@@ -10,6 +10,7 @@
                  [hiccup "1.0.5"]
                  [valip "0.2.0"]
                  [environ "1.0.0"]
+                 [com.cemerick/friend "0.2.1"]
                  [ring/ring-defaults "0.1.2"]]
   :plugins [[lein-ring "0.8.13"]
             [lein-environ "1.0.0"]]

@@ -124,3 +124,28 @@ CREATE TABLE worn_treasure (
   treasure_id INTEGER references treasure(id),
   player_id INTEGER references player(id)
 );
+
+CREATE TABLE mud_user (
+  id SERIAL PRIMARY KEY,
+  username TEXT,
+  password TEXT
+);
+
+CREATE TABLE user_player (
+  mud_user_id INTEGER references mud_user(id),
+  player_id INTEGER references player(id)
+);
+
+CREATE TABLE mud_role (
+  id SERIAL PRIMARY KEY,
+  name TEXT
+);
+
+CREATE TABLE user_role (
+  mud_user_id INTEGER references mud_user(id),
+  mud_role_id INTEGER references mud_role(id)
+);
+
+insert into mud_role(name) values ('::user');
+insert into mud_role(name) values ('::admin');
+

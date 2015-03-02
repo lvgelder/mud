@@ -2,7 +2,8 @@
   (:refer-clojure) ;;(1)
   (:use korma.db korma.core)
   (:require [clojure.string :as string])
-  (:require [environ.core :refer [env]])
+  (:require [environ.core :refer [env]]
+            [cemerick.friend.credentials :as creds])
   )
 
 
@@ -34,7 +35,7 @@
 (defentity treasure
            (entity-fields :id :name :description :type :action_description :hit_points))
 
-(declare player room monster)
+(declare player room monster user_role)
 
 (defentity weapon
            (entity-fields :id :name :damage))
@@ -59,6 +60,17 @@
            (many-to-many weapon :player_weapon)
            )
 
+(defentity mud_role (entity-fields :id :name))
+
+(defentity mud_user
+           (entity-fields :id :username :password)
+           (many-to-many mud_role :user_role)
+           )
+
+(defentity user_player (entity-fields :mud_user_id :player_id))
+
+(defentity user_role (entity-fields :mud_user_id :mud_role_id))
+
 (defentity exit (entity-fields :id :from_room :to_room :description :locked))
 
 (defentity room_player (entity-fields :player_id :room_id))
@@ -81,6 +93,20 @@
 
 (defn all-players []
   (select player))
+
+(defn create-user [usr]
+  (insert mud_user
+          (values {:username (:username usr) :password (creds/hash-bcrypt (:password usr))}))
+  )
+
+(defn add-user-role [user-id role-id]
+  (insert user_role
+          (values {:mud_user_id user-id  :mud_role_id role-id}))
+  )
+
+(defn find-by-username [username]
+  (first (select mud_user (where {:username username})))
+  )
 
 (defn create-room [rm]
   (insert room (values rm))
