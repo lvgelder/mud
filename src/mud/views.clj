@@ -49,7 +49,7 @@
     [:body
      [:div {:class "navbar navbar-inverse"}
       [:div {:class :navbar-inner}
-       [:a {:class :brand :href "/"} "SUD!"]
+       [:a {:class :brand :href "/player"} "SUD!"]
        ]]
 
      [:div.container (seq body)]])) ;;(3)
@@ -73,14 +73,10 @@
      [:a {:href "/player/new"}
       "Create a new hero"]]
     [:p (if-let [identity (friend/identity req)]
-          (apply str "Logged in, with these roles: "
-                 (-> identity friend/current-authentication :roles pr-str))
-          "anonymous user")]
-
-    [:h1 "Player List"]
-    [:ol
-     (for [p (models/all-players)] ;;(4)
-       [:li [:a {:href (str "/player/" (:id p))} (:name p)]])]))
+          [:a {:href "/player"}
+           "Go back to dungeon.."]
+          login-form)]
+))
 
 (defn new-player []
   (base-page
@@ -92,24 +88,32 @@
       [:post "/players"]
       [:legend "Create a new hero"]
       [:div {:class "control-group"}
-       [:label {:class "control-label"} "Name"]
+       [:label {:class "control-label"} "Your Username"]
+       [:div {:class "controls"}
+        (text-field :username)]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Your Password"]
+       [:div {:class "controls"}
+        (text-field :password)]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Name of your Hero"]
        [:div {:class "controls"}
         (text-field :name)]]
-      [:div {:class "control-group"}
-       [:label {:class "control-label"} "Description"]
-       [:div {:class "controls"}
-       (text-field :description)]]
       [:div {:class "control-group"}
        [:div {:class "controls"}
        (submit-button {:class "btn btn-primary"} "Create Hero")]])))
 
 (defn make-player [params]
   (models/create-player params)
-  (let [pl (models/player-by-name (:name params))]
+  (models/create-user params)
+  (let [pl (models/player-by-name (:name params))
+        usr (models/find-by-username (:username params))]
     (models/initialize-player-room (:id pl) 1)
     (models/initialize-player-weapon (:id pl))
+    (models/add-user-role (:id usr) 1)
+    (models/add-user-player (:id usr) (:id pl))
     )
-  (response/redirect-after-post "/entrance"))
+  (response/redirect-after-post "/player"))
 
 (defn create-user [params]
   (models/create-user params)
@@ -173,8 +177,11 @@
     )
   )
 
-(defn player [id-str]
-  (let [id (read-string id-str) pl (models/player-by-id id) room (models/room-by-player-id id)]
+(defn player [req]
+  (let [identity (friend/identity req)
+        usr (models/find-by-username (:current identity))
+        pl (models/find-player-by-username (:id usr))
+        room (models/room-by-player-id (:id pl))]
     (player-page pl room nil)
     )
   )

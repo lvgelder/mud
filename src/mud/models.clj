@@ -53,7 +53,7 @@
            (many-to-many player :room_player))
 
 (defentity player
-           (entity-fields :id :name :description :hit_points :max_hit_points)
+           (entity-fields :id :name :hit_points :max_hit_points)
            (many-to-many room :room_player)
            (many-to-many treasure :player_treasure)
            (many-to-many monster :player_monster)
@@ -108,12 +108,18 @@
   (first (select mud_user (where {:username username})))
   )
 
+(defn add-user-player [user-id player-id]
+  (insert user_player
+          (values {:mud_user_id user-id :player_id player-id}))
+  )
+
 (defn create-room [rm]
   (insert room (values rm))
   )
 
 (defn create-player [pl]
-  (insert player (values pl))
+  (insert player
+          (values {:name (:name pl) :description "The Hero"}))
   )
 
 (defn initialize-player-room [player_id room_id]
@@ -229,6 +235,13 @@
                 (= :worn_treasure.treasure_id :id))
           (where {:worn_treasure.player_id pl_id})
           ))
+
+(defn find-player-by-username [user-id]
+  (first (select player
+          (join user_player
+                (= :user_player.player_id :id))
+          (where {:user_player.mud_user_id user-id})
+          )))
 
 
 (defn remove-all-treasure-from-player [player_id]

@@ -7,6 +7,7 @@
             [ring.util.response :as response]
             [mud.views :as views]
             [mud.models :as models]
+            [compojure.route :as route]
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
@@ -26,23 +27,23 @@
            (GET "/entrance" req
                 (views/entrance req))
            (GET "/player/new" []
-                (friend/authorize #{::user} "This page can only be seen by authenticated users."
-                                  (GET "/login" [] "Here is our login page.")
-                                  (views/new-player)))
+                (views/new-player))
            (GET "/login" [] (views/login))
            (GET "/signup"[] (views/sign-up))
            (GET "/logout" []
                 (friend/logout* (response/redirect "/entrance") ))
-           (GET "/player/:id" [id] ;;(2)
+           (GET "/player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                 (GET "/login" [] "Here is our login page.")
-                (views/player id)))
+                (views/player req)))
            (POST "/signup" [& params]
                  (views/create-user params))
            (POST "/players" [& params]
                  (views/make-player params))
            (POST "/actions" [& params]
                  (views/action params))
+           (route/resources "/")
+           (route/not-found "<h1>Page not found</h1>")
            )
 
 (defn find-user-and-role [usr]
@@ -56,11 +57,11 @@
 
 (def app
   (handler/site
-  (friend/authenticate app-routes {
-                                   :login-uri "/login"
-                                   :credential-fn #(creds/bcrypt-credential-fn (find-user-and-role %) %)
-                                   :workflows [(workflows/interactive-form)]})
-                       (wrap-keyword-params app-routes)
-                       (wrap-params app-routes)))
+    (friend/authenticate app-routes {
+                                     :login-uri     "/login"
+                                     :credential-fn #(creds/bcrypt-credential-fn (find-user-and-role %) %)
+                                     :workflows     [(workflows/interactive-form)]})
+    (wrap-keyword-params app-routes)
+    (wrap-params app-routes)))
 
 ;
