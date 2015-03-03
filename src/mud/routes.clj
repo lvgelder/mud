@@ -24,20 +24,15 @@
 (defroutes app-routes
            (GET "/" [] ;;(1)
                 (views/index))
-           (GET "/entrance" req
-                (views/entrance req))
            (GET "/player/new" []
                 (views/new-player))
            (GET "/login" [] (views/login))
-           (GET "/signup"[] (views/sign-up))
            (GET "/logout" []
-                (friend/logout* (response/redirect "/entrance") ))
+                (friend/logout* (response/redirect "/player") ))
            (GET "/player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                 (GET "/login" [] "Here is our login page.")
                 (views/player req)))
-           (POST "/signup" [& params]
-                 (views/create-user params))
            (POST "/players" [& params]
                  (views/make-player params))
            (POST "/actions" [& params]

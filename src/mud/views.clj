@@ -9,37 +9,25 @@
                              [credentials :as creds])
             ))
 
-
-(def signup-form
-  [:div {:class "row"}
-   [:div {:class "columns small-12"}
-    [:h3 "Sign up "
-     [:small "(Any user/pass combination will do, as you are creating a new account or profile.)"]]
-    [:div {:class "row"}
-     [:form {:method "POST" :action "/signup" :class "columns small-4"}
-      [:div "Username" [:input {:type "text" :name "username" :required "required"}]]
-      [:div "Password" [:input {:type "password" :name "password" :required "required"}]]
-      [:div "Confirm" [:input {:type "password" :name "confirm" :required "required"}]]
-      [:div
-       [:input {:type "submit" :class "button" :value "Sign up"}]
-       ]]]]])
-
 (def login-form
-  [:div {:class "row"}
-   [:div {:class "columns small-12"}
-    [:a {:href "/signup"}
-     "Create a new user"]
-    [:h3 "Login"]
-    [:div {:class "row"}
-     [:form {:method "POST" :action "login" :class "columns small-4"}
-      [:div "Username" [:input {:type "text" :name "username"}]]
-      [:div "Password" [:input {:type "password" :name "password"}]]
-      [:div [:input {:type "submit" :class "button" :value "Login"}]]]]]])
+  [:div
+   [:legend "Login"]
+     [:form {:method "POST" :action "login" :class "form-horizontal"}
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Username"]
+       [:div {:class "controls"}
+        [:input {:type "text" :name "username"}]]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Password"]
+       [:div {:class "controls"}
+        [:input {:type "password" :name "password"}]]]
+       [:div {:class "control-group"}
+        [:div {:class "controls"}
+         (submit-button {:class "btn btn-primary"} "Login")]]]])
 
 (defn index []
-  (response/redirect "/entrance"))
+  (response/redirect "/player"))
 
-;
 (defn base-page [title & body] ;;(1)
   (html5
     [:head
@@ -49,39 +37,27 @@
     [:body
      [:div {:class "navbar navbar-inverse"}
       [:div {:class :navbar-inner}
-       [:a {:class :brand :href "/player"} "SUD!"]
-       ]]
+       [:div [:a {:class :brand :href "/player"} "SUD!"]]
+       [:div {:class "navbar-right"}
+        [:a {:class "brand" :href "/logout"} "logout"]]
+       ]
+      ]
 
      [:div.container (seq body)]])) ;;(3)
 
 (defn login []
-  (base-page "Login"
+  (base-page
+    "Welcome to Sud (a single user dungeon)"
+             [:div.row.admin-bar
+              [:a {:href "/player/new"}
+               "Create a new hero"]]
              [:div
               login-form]
              ))
 
-(defn sign-up []
-  (base-page "Create user"
-             [:div
-              signup-form]
-             ))
-
-(defn entrance [req]
-  (base-page
-    "Welcome to Sud (a single user dungeon)"
-    [:div.row.admin-bar
-     [:a {:href "/player/new"}
-      "Create a new hero"]]
-    [:p (if-let [identity (friend/identity req)]
-          [:a {:href "/player"}
-           "Go back to dungeon.."]
-          login-form)]
-))
-
 (defn new-player []
   (base-page
     "New Hero"
-
 
     (form-to
       {:class "form-horizontal"}
@@ -114,14 +90,6 @@
     (models/add-user-player (:id usr) (:id pl))
     )
   (response/redirect-after-post "/player"))
-
-(defn create-user [params]
-  (models/create-user params)
-  (let [usr (models/find-by-username (:username params))]
-    (models/add-user-role (:id usr) 1)
-    )
-  (response/redirect-after-post "/entrance")
-  )
 
 (defn player-page [pl room action]
   (base-page
