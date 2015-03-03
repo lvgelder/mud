@@ -4,6 +4,7 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.flash :refer [wrap-flash]]
             [ring.util.response :as response]
             [mud.views :as views]
             [mud.models :as models]
@@ -26,7 +27,7 @@
                 (views/index))
            (GET "/player/new" []
                 (views/new-player))
-           (GET "/login" [] (views/login))
+           (GET "/login" req (views/login req))
            (GET "/logout" []
                 (friend/logout* (response/redirect "/player") ))
            (GET "/player" req
@@ -56,6 +57,7 @@
                                      :login-uri     "/login"
                                      :credential-fn #(creds/bcrypt-credential-fn (find-user-and-role %) %)
                                      :workflows     [(workflows/interactive-form)]})
+    (wrap-flash app-routes)
     (wrap-keyword-params app-routes)
     (wrap-params app-routes)))
 

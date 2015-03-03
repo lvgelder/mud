@@ -1,6 +1,6 @@
 (ns mud.views
   (:require [hiccup.page :refer [html5 include-js include-css]]
-            [hiccup.form :refer [form-to text-field submit-button text-area hidden-field]]
+            [hiccup.form :refer [form-to text-field submit-button text-area hidden-field password-field]]
             [ring.util.response :as response]
             [mud.models :as models]
             [mud.brain :as brain]
@@ -9,21 +9,6 @@
                              [credentials :as creds])
             ))
 
-(def login-form
-  [:div
-   [:legend "Login"]
-     [:form {:method "POST" :action "login" :class "form-horizontal"}
-      [:div {:class "control-group"}
-       [:label {:class "control-label"} "Username"]
-       [:div {:class "controls"}
-        [:input {:type "text" :name "username"}]]]
-      [:div {:class "control-group"}
-       [:label {:class "control-label"} "Password"]
-       [:div {:class "controls"}
-        [:input {:type "password" :name "password"}]]]
-       [:div {:class "control-group"}
-        [:div {:class "controls"}
-         (submit-button {:class "btn btn-primary"} "Login")]]]])
 
 (defn index []
   (response/redirect "/player"))
@@ -45,15 +30,28 @@
 
      [:div.container (seq body)]])) ;;(3)
 
-(defn login []
+(defn login [req]
   (base-page
     "Welcome to Sud (a single user dungeon)"
-             [:div.row.admin-bar
-              [:a {:href "/player/new"}
-               "Create a new hero"]]
-             [:div
-              login-form]
-             ))
+    [:div.row.admin-bar
+     [:a {:href "/player/new"}
+      "Create a new hero"]]
+    [:div
+     [:legend "Login"]
+     [:form {:method "POST" :action "login" :class "form-horizontal"}
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Username"]
+       [:div {:class "controls"}
+        [:input {:type "text" :name "username"}]]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Password"]
+       [:div {:class "controls"}
+        [:input {:type "password" :name "password"}]]]
+      [:div {:class "control-group"}
+       [:div {:class "controls"}
+        (submit-button {:class "btn btn-primary"} "Login")]]]]
+    [:div (:flash req)]
+    ))
 
 (defn new-player []
   (base-page
@@ -70,7 +68,7 @@
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Your Password"]
        [:div {:class "controls"}
-        (text-field :password)]]
+        (password-field :password)]]
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your Hero"]
        [:div {:class "controls"}
@@ -89,7 +87,7 @@
     (models/add-user-role (:id usr) 1)
     (models/add-user-player (:id usr) (:id pl))
     )
-  (response/redirect-after-post "/player"))
+(assoc (response/redirect-after-post "/login") :flash "New player created successfully! Please login with your new credentials."))
 
 (defn player-page [pl room action]
   (base-page
