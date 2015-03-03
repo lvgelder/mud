@@ -25,8 +25,8 @@
 (defroutes app-routes
            (GET "/" [] ;;(1)
                 (views/index))
-           (GET "/player/new" []
-                (views/new-player))
+           (GET "/player/new" req
+                (views/new-player req))
            (GET "/login" req (views/login req))
            (GET "/logout" []
                 (friend/logout* (response/redirect "/player") ))

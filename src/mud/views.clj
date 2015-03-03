@@ -4,6 +4,7 @@
             [ring.util.response :as response]
             [mud.models :as models]
             [mud.brain :as brain]
+            [mud.validations :as valid]
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
@@ -53,7 +54,7 @@
     [:div (:flash req)]
     ))
 
-(defn new-player []
+(defn new-player [req]
   (base-page
     "New Hero"
 
@@ -64,30 +65,51 @@
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Your Username"]
        [:div {:class "controls"}
-        (text-field :username)]]
+        (text-field :username)
+       [:div
+        (for [error (:username (:flash req))]
+          [:div error ]
+          )]]]
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Your Password"]
        [:div {:class "controls"}
-        (password-field :password)]]
+        (password-field :password)
+        [:div
+         (for [error (:password (:flash req))]
+           [:div error ]
+           )]]]
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your Hero"]
        [:div {:class "controls"}
-        (text-field :name)]]
+        (text-field :name)
+        [:div
+         (for [error (:name (:flash req))]
+           [:div error ]
+           )]]]
       [:div {:class "control-group"}
        [:div {:class "controls"}
-       (submit-button {:class "btn btn-primary"} "Create Hero")]])))
+       (submit-button {:class "btn btn-primary"} "Create Hero")]])
+    [:div (:flash req)]
+    ))
 
 (defn make-player [params]
-  (models/create-player params)
-  (models/create-user params)
-  (let [pl (models/player-by-name (:name params))
-        usr (models/find-by-username (:username params))]
-    (models/initialize-player-room (:id pl) 1)
-    (models/initialize-player-weapon (:id pl))
-    (models/add-user-role (:id usr) 1)
-    (models/add-user-player (:id usr) (:id pl))
-    )
-(assoc (response/redirect-after-post "/login") :flash "New player created successfully! Please login with your new credentials."))
+  (let [err (valid/valid-user? params)]
+    (println err)
+    (if (not(empty? err))
+      (assoc (response/redirect "/player/new") :flash err)
+      (assoc (response/redirect "/login") :flash "success")
+      )
+    ))
+  ;(models/create-player params)
+  ;(models/create-user params)
+  ;(let [pl (models/player-by-name (:name params))
+  ;      usr (models/find-by-username (:username params))]
+  ;  (models/initialize-player-room (:id pl) 1)
+  ;  (models/initialize-player-weapon (:id pl))
+  ;  (models/add-user-role (:id usr) 1)
+  ;  (models/add-user-player (:id usr) (:id pl))
+  ;  )
+;(assoc (response/redirect-after-post "/login") :flash "New player created successfully! Please login with your new credentials."))
 
 (defn player-page [pl room action]
   (base-page
