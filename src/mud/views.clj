@@ -57,7 +57,6 @@
 (defn new-player [req]
   (base-page
     "New Hero"
-
     (form-to
       {:class "form-horizontal"}
       [:post "/players"]
@@ -65,7 +64,7 @@
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Your Username"]
        [:div {:class "controls"}
-        (text-field :username)
+        (text-field :username (:username (:form-vals (:flash req))))
        [:div
         (for [error (:username (:flash req))]
           [:div error ]
@@ -73,7 +72,7 @@
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Your Password"]
        [:div {:class "controls"}
-        (password-field :password)
+        (password-field :password (:password (:form-vals (:flash req))))
         [:div
          (for [error (:password (:flash req))]
            [:div error ]
@@ -81,7 +80,7 @@
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your Hero"]
        [:div {:class "controls"}
-        (text-field :name)
+        (text-field :name (:name (:form-vals (:flash req))))
         [:div
          (for [error (:name (:flash req))]
            [:div error ]
@@ -94,9 +93,10 @@
 
 (defn make-player [params]
   (let [err (valid/valid-user? params)]
-    (println err)
     (if (not(empty? err))
-      (assoc (response/redirect "/player/new") :flash err)
+      (assoc (response/redirect "/player/new") :flash (assoc err :form-vals {:username (:username params)
+                                                                             :password (:password params)
+                                                                             :name (:name params)}))
       (assoc (response/redirect "/login") :flash "success")
       )
     ))
