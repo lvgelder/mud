@@ -11,19 +11,10 @@
             [compojure.route :as route]
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
-                             [credentials :as creds])
-            [clojure.string :as str]))
+                             [credentials :as creds])))
 
-
-(def users {"admin" {:username "admin"
-                     :password (creds/hash-bcrypt "password")
-                     :roles #{::admin}}
-            "dave" {:username "dave"
-                    :password (creds/hash-bcrypt "password")
-                    :roles #{::user}}})
-;
 (defroutes app-routes
-           (GET "/" [] ;;(1)
+           (GET "/" []
                 (views/index))
            (GET "/player/new" req
                 (views/new-player req))
@@ -39,17 +30,13 @@
            (POST "/actions" [& params]
                  (views/action params))
            (route/resources "/")
-           (route/not-found "<h1>Page not found</h1>")
-           )
+           (route/not-found "<h1>Page not found</h1>"))
 
 (defn find-user-and-role [usr]
   (let [usr-from-db (models/find-by-username (:username usr))]
     (if usr-from-db
       {(:username usr) (assoc usr-from-db :roles #{::user})}
-      {}
-      )
-    )
-  )
+      {})))
 
 (def app
   (handler/site
@@ -61,4 +48,4 @@
     (wrap-keyword-params app-routes)
     (wrap-params app-routes)))
 
-;
+
