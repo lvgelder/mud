@@ -21,14 +21,18 @@
            (GET "/login" req (views/login req))
            (GET "/logout" []
                 (friend/logout* (response/redirect "/player") ))
+           (GET "/actions" []
+                (response/redirect "/player"))
            (GET "/player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                 (GET "/login" [] "Here is our login page.")
                 (views/player req)))
            (POST "/players" [& params]
                  (views/make-player params))
-           (POST "/actions" [& params]
-                 (views/action params))
+           (POST "/actions" req
+                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                   (GET "/login" [] "Here is our login page.")
+                                   (views/action req)))
            (route/resources "/")
            (route/not-found "<h1>Page not found</h1>"))
 

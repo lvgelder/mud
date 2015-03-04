@@ -171,17 +171,15 @@
         usr (models/find-by-username (:current identity))
         pl (models/find-player-by-username (:id usr))
         room (models/room-by-player-id (:id pl))]
-    (player-page pl room nil)
+    (player-page pl room (:flash req))
     )
   )
 
-(defn action [params]
-  (let [player-id (read-string (:player_id params))
-        room-id (read-string (:room_id params))
-        action (brain/action player-id (:action params) room-id)
-        pl (models/player-by-id player-id)
-        room (models/room-by-player-id player-id)]
-    (player-page pl room action)
-    )
-  )
+(defn action [req]
+  (let [identity (friend/identity req)
+        usr (models/find-by-username (:current identity))
+        pl (models/find-player-by-username (:id usr))
+        room (models/room-by-player-id (:id pl))
+        action (brain/action (:id pl) (:action (:params req)) (:id room))]
+    (assoc (response/redirect "/player") :flash action)))
 

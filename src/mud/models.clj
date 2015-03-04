@@ -238,6 +238,7 @@
 
 (defn find-player-by-username [user-id]
   (first (select player
+                 (with treasure) (with monster)
           (join user_player
                 (= :user_player.player_id :id))
           (where {:user_player.mud_user_id user-id})
