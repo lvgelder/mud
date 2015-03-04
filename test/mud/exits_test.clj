@@ -42,6 +42,16 @@
         )
       )
 
+(fact "Take exit doesn't work if there is no exit"
+      (take-exit 1 "take exit 1" 1) => "There is no door."
+      (provided
+        (models/player-by-id 1) => {:id 1 :monster []}
+        (models/exits-by-room 1) => []
+        (models/monster-by-room 1) => []
+        (models/set-player-room 1 nil) => irrelevant :times 0
+        )
+      )
+
 (fact "Take exit doesn't work if room is locked"
       (take-exit 1 "take exit 1" 1) => "This door is locked. You can't open it."
       (provided

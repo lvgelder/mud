@@ -54,6 +54,7 @@
         ]
     (cond
       (core/monsters-left-to-kill? player monsters) (format "You can't reach the door because there is a %s trying to eat you." (:name (first monsters)))
+      (empty? exit) "There is no door."
       (= (:locked exit) 1) (locked-exit player action exit)
       (using-key? action) "The door is not locked."
       :else (models/set-player-room player-id (:to_room exit))

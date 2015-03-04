@@ -15,6 +15,7 @@
   :plugins [[lein-ring "0.8.13"]
             [lein-environ "1.0.0"]]
   :ring {:handler mud.routes/app}
+  :jvm-opts ["-Xmx1g" "-server"]
   :profiles
   {:test {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]
