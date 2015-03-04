@@ -158,8 +158,6 @@
       [:post "/actions"]
       [:div {:class "form-group"}
        (text-field {:class "input-large"} :action)
-       (hidden-field :player_id (:id pl))
-       (hidden-field :room_id (:id room))
        [:span {:style "padding: 10px"} (submit-button {:class "btn btn-primary pad-left"} "What do you want to do?")]
        ]
       )
