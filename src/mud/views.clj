@@ -8,7 +8,7 @@
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
-            ))
+            [mud.core :as core]))
 
 
 (defn index []
@@ -166,18 +166,17 @@
 
 (defn player [req]
   (let [identity (friend/identity req)
-        usr (models/find-by-username (:current identity))
-        pl (models/find-player-by-username (:id usr))
-        room (models/room-by-player-id (:id pl))]
+        player (core/get-player-from-identity identity)
+        pl (models/player-by-id (:id player))
+        room (models/room-by-player-id (:id player))]
     (player-page pl room (:flash req))
     )
   )
 
 (defn action [req]
   (let [identity (friend/identity req)
-        usr (models/find-by-username (:current identity))
-        pl (models/find-player-by-username (:id usr))
-        room (models/room-by-player-id (:id pl))
-        action (brain/action (:id pl) (:action (:params req)) (:id room))]
+        player (core/get-player-from-identity identity)
+        room (models/room-by-player-id (:id player))
+        action (brain/action (:id player) (:action (:params req)) (:id room))]
     (assoc (response/redirect "/player") :flash action)))
 

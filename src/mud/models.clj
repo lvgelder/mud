@@ -65,6 +65,7 @@
 (defentity mud_user
            (entity-fields :id :username :password)
            (many-to-many mud_role :user_role)
+           (many-to-many player :user_player)
            )
 
 (defentity user_player (entity-fields :mud_user_id :player_id))
@@ -105,7 +106,7 @@
   )
 
 (defn find-by-username [username]
-  (first (select mud_user (where {:username username})))
+  (first (select mud_user (with player) (where {:username username})))
   )
 
 (defn add-user-player [user-id player-id]

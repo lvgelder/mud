@@ -91,3 +91,8 @@
     (contains-item-with-id treasure-worn treasure)
     )
   )
+
+(defn get-player-from-identity [identity]
+  (let [username (:current identity)
+        auths ((:authentications identity) username)]
+    (first (:player auths))))
