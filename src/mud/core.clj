@@ -86,6 +86,10 @@
   (= (:type treasure) "wearable")
   )
 
+(defn combinable? [treasure]
+  (= (:type treasure) "combinable")
+  )
+
 (defn treasure-worn? [player treasure]
   (let [treasure-worn (models/worn-treasure-by-player-id (:id player))]
     (contains-item-with-id treasure-worn treasure)

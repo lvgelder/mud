@@ -378,3 +378,52 @@
       (restore-hit-points player treasure) => irrelevant
       (provided
         (models/set-hit-points 1 4) => irrelevant :times 1))
+
+
+(fact "combinable treasure is not combinable if player doesn't have it"
+      (def player {:id 1 :treasure []} )
+
+      (combine-treasure 1 "combine hat and shoe" 1) => "You don't have that."
+      (provided
+        (models/player-by-id 1) => player
+        )
+      )
+
+(fact "combinable treasure is not combinable if treasure not combinable"
+             (def treasure1 {:id 1 :type "combinbable" :name "pen"})
+             (def treasure2 {:id 2 :type "edible" :name "fish"})
+             (def player {:id 1 :treasure [treasure1 treasure2]} )
+
+             (combine-treasure 1 "combine pen and fish" 1) => "You can't combine that."
+             (provided
+               (models/player-by-id 1) => player
+               )
+             )
+
+(fact "combinable treasure is not combinable if treasure not part of same combinable treasure"
+      (def treasure1 {:id 1 :type "combinable" :name "pen"})
+      (def treasure2 {:id 2 :type "combinable" :name "fish"})
+      (def treasure3 {:id 3 :type "combinable" :name "ink"})
+      (def player {:id 1 :treasure [treasure1 treasure2]} )
+
+      (combine-treasure 1 "combine pen and fish" 1) => "You can't combine that."
+      (provided
+        (models/player-by-id 1) => player
+        (models/find-combinable-items 1) => [treasure1 treasure3]
+        )
+      )
+
+(fact "combinable treasure is combinable if treasure part of same combinable treasure"
+      (def treasure1 {:id 1 :type "combinable" :name "pen"})
+      (def treasure2 {:id 2 :type "combinable" :name "ink"})
+      (def treasure3 {:id 3 :type "combinable" :name "pen with ink" :action_description "You add ink to the pen."})
+      (def player {:id 1 :treasure [treasure1 treasure2]} )
+
+      (combine-treasure 1 "combine pen and ink" 1) => "You add ink to the pen."
+      (provided
+        (models/player-by-id 1) => player
+        (models/find-combinable-items 1) => [treasure1 treasure2]
+        (models/find-combined-treasure 1) => [treasure3]
+        (models/remove-treasure-from-player 1 1) => :irrelevant :times 1
+        (models/remove-treasure-from-player 1 2) => :irrelevant :times 1
+        (models/collect-treasure 1 3) => irrelevant :times 1))

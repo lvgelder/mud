@@ -64,12 +64,12 @@ INSERT INTO monster_weapon (monster_id, weapon_id) VALUES (1, 2);
 INSERT INTO room_monster(room_id, monster_id) VALUES (2, 1);
 INSERT INTO treasure (id, name, description, type) VALUES (1, 'key', 'A key that looks like it might fit the lock...', 'key');
 INSERT INTO treasure (id, name, description) VALUES (2, 'book', 'An illustrated book of traffic lights around the world.');
-INSERT INTO treasure (id, name, description) VALUES (3, 'newspaper', 'Todays edition of your favourite newspaper');
+INSERT INTO treasure (id, name, description, type) VALUES (3, 'newspaper', 'Todays edition of your favourite newspaper', 'combinable');
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (4, 'coffee', 'A cup of hot coffee. Mmm that smells good.', 'drinkable', 'Everything is always better after a cup of coffee.', 10);
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (5, 'scone', 'A scone with clotted cream and jam.', 'edible', 'It tastes even better than you had hoped.', 50);
 INSERT INTO treasure (id, name, description, type, action_description) VALUES (6, 'hat', 'A furry hat with ears. Looks warm.', 'wearable', 'Your ears are now warm.');
-INSERT INTO treasure (id, name, description) VALUES (7, 'pen', 'A fountain pen.');
-INSERT INTO treasure (id, name, description) VALUES (8, 'ink', 'A jar of ink.');
+INSERT INTO treasure (id, name, description, type) VALUES (7, 'pen', 'A fountain pen.', 'combinable');
+INSERT INTO treasure (id, name, description, type) VALUES (8, 'ink', 'A jar of ink.', 'combinable');
 INSERT INTO treasure (id, name, description, type, action_description, hit_points) VALUES (9, 'yogurt', 'A tub of yogurt. Strawberry flavour.', 'edible', 'Tasty, although you suspect the strawberry is artificial', 5);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (2, 1);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 2);
@@ -148,4 +148,21 @@ CREATE TABLE user_role (
 
 insert into mud_role(name) values ('::user');
 insert into mud_role(name) values ('::admin');
+
+
+CREATE TABLE combinable_treasure (
+combined_treasure_id INTEGER references treasure(id),
+treasure_id INTEGER references treasure(id)
+);
+
+INSERT INTO treasure (id, name, description, action_description, type) VALUES (10, 'pen', 'A pen with ink', 'You fill the pen with ink', 'combinable');
+INSERT INTO treasure (id, name, description, action_description, type) VALUES (11, 'newspaper', 'Newspaper with doodles', 'You draw fangs on the faces in the newspaper.', 'combined');
+
+insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (10, 7);
+insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (10, 8);
+insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (11, 10);
+insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (11, 3);
+
+
+
 

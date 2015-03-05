@@ -22,9 +22,6 @@
 (def database-port
   (env :database-port))
 
-;(defdb mud ;;(2)
-;       (sqlite3 {:db "mud.db"}))
-
 (defdb mud (postgres {:db database-name
                        :user database-username
                        :password database-password
@@ -91,6 +88,8 @@
 (defentity player_weapon (entity-fields :player_id :weapon_id))
 
 (defentity monster_weapon (entity-fields :monster_id :weapon_id))
+
+(defentity combinable_treasure (entity-fields :combined_treasure_id :treasure_id))
 
 (defn all-players []
   (select player))
@@ -245,6 +244,18 @@
           (where {:user_player.mud_user_id user-id})
           )))
 
+(defn find-combined-treasure [treasure-id]
+  (select treasure
+          (join combinable_treasure
+                (= :combinable_treasure.combined_treasure_id :id))(where {:combinable_treasure.treasure_id treasure-id})))
+
+
+(defn find-combinable-items [treasure-id]
+  (select treasure
+                 (join combinable_treasure
+                       (= :combinable_treasure.treasure_id :id))
+                 (where {:combinable_treasure.combined_treasure_id (:id (first (find-combined-treasure treasure-id)))})
+                 ))
 
 (defn remove-all-treasure-from-player [player_id]
   (delete player_treasure

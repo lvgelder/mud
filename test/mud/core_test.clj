@@ -112,3 +112,10 @@
             (models/worn-treasure-by-player-id 1) => [treasure]
             )
       )
+
+(fact "all treasure mentioned"
+      (def treasure1 {:id 1 :type "wearable" :name "hat"})
+      (def treasure2 {:id 2 :type "wearable" :name "shoe"})
+      (def treasure3 {:id 3 :type "wearable" :name "gloves"})
+      (treasure-mentioned "combine hat shoe" [treasure1 treasure2 treasure3]) => [treasure1 treasure2]
+      )

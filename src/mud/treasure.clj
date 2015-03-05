@@ -139,4 +139,23 @@
 
 
 
+(defn combine-items [player-id treasure]
+  (let [combined-treasure (first (models/find-combined-treasure (:id (first treasure))))]
+    do
+    (doall (for [t treasure] (models/remove-treasure-from-player player-id (:id t))))
+    (models/collect-treasure player-id (:id combined-treasure))
+    (:action_description combined-treasure)))
+
+(defn combine-treasure [player-id action room-id]
+  (let [player (models/player-by-id player-id)
+        treasure-mentioned (core/treasure-mentioned action (:treasure player))
+        combinable-items (models/find-combinable-items (:id (first treasure-mentioned)))]
+    (cond
+      (empty? treasure-mentioned) "You don't have that."
+      (not (every? core/combinable? treasure-mentioned )) "You can't combine that."
+      (not (= (set treasure-mentioned) (set combinable-items))) "You can't combine that."
+      (= (set treasure-mentioned) (set combinable-items)) (combine-items player-id treasure-mentioned))))
+
+
+
 
