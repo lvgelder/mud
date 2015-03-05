@@ -426,4 +426,6 @@
         (models/find-combined-treasure 1) => [treasure3]
         (models/remove-treasure-from-player 1 1) => :irrelevant :times 1
         (models/remove-treasure-from-player 1 2) => :irrelevant :times 1
+        (models/eat-treasure 1 1) => :irrelevant :times 1
+        (models/eat-treasure 1 2) => :irrelevant :times 1
         (models/collect-treasure 1 3) => irrelevant :times 1))

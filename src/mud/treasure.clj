@@ -143,6 +143,7 @@
   (let [combined-treasure (first (models/find-combined-treasure (:id (first treasure))))]
     do
     (doall (for [t treasure] (models/remove-treasure-from-player player-id (:id t))))
+    (doall (for [t treasure] (models/eat-treasure player-id (:id t))))
     (models/collect-treasure player-id (:id combined-treasure))
     (:action_description combined-treasure)))
 
