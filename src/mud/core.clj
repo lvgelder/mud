@@ -62,11 +62,18 @@
     )
   )
 
-(defn exits-mentioned [action exits]
-  (let [action-list (str/split action #"\s+")]
-    (filter #(seq-contains? action-list (:keywords %)) exits)
+(defn keywords-by-exit [action exit]
+  (let [action-list (str/split action #"\s+")
+        keywords (str/split (:keywords exit) #"\s+")
+        matched-keywords (filter #(seq-contains? action-list %) keywords)]
+    (if (not-empty matched-keywords) exit)
     )
   )
+
+(defn exits-mentioned [action exits]
+  (filter identity (map #(keywords-by-exit action %) exits)))
+
+
 (defn asked-from-room?[action]
   (let [action-list (str/split action #"\s+")]
     (and (seq-contains? action-list "from") (seq-contains? action-list "room"))

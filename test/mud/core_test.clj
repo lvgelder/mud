@@ -119,3 +119,14 @@
       (def treasure3 {:id 3 :type "wearable" :name "gloves"})
       (treasure-mentioned "combine hat shoe" [treasure1 treasure2 treasure3]) => [treasure1 treasure2]
       )
+
+(fact "exits mentioned should return exit mentioned"
+      (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "door" :locked 0})
+
+      (exits-mentioned "open door" [exit1]) => [exit1])
+
+(fact "exits mentioned should return exit mentioned if matches one of the keywords"
+      (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "door exit" :locked 0})
+      (def exit2 {:id 2 :to_room 43 :from_room 1 :keywords "puppy" :locked 0})
+
+      (exits-mentioned "open door" [exit1 exit2]) => [exit1])

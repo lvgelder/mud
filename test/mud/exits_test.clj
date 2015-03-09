@@ -45,6 +45,19 @@
         )
       )
 
+(fact "if there is one door and you match one of its keyword return that"
+      (def player {:id 1})
+      (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "door exit" :locked 0})
+
+      (take-exit 1 "take first exit" 1) => irrelevant
+      (provided
+        (models/player-by-id 1) => player
+        (models/exits-by-room 1) => [exit1]
+        (models/monster-by-room 1) => []
+        (models/set-player-room 1 42) => irrelevant :times 1
+        )
+      )
+
 (fact "if you don't match the keywords return nothing"
       (def player {:id 1})
       (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "fish" :locked 0})
