@@ -69,7 +69,7 @@
 
 (defentity user_role (entity-fields :mud_user_id :mud_role_id))
 
-(defentity exit (entity-fields :id :from_room :to_room :description :locked))
+(defentity exit (entity-fields :id :from_room :to_room :description :keywords :locked))
 
 (defentity room_player (entity-fields :player_id :room_id))
 

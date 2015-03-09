@@ -62,6 +62,11 @@
     )
   )
 
+(defn exits-mentioned [action exits]
+  (let [action-list (str/split action #"\s+")]
+    (filter #(seq-contains? action-list (:keywords %)) exits)
+    )
+  )
 (defn asked-from-room?[action]
   (let [action-list (str/split action #"\s+")]
     (and (seq-contains? action-list "from") (seq-contains? action-list "room"))

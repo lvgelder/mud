@@ -49,15 +49,18 @@
 
 (defn take-exit [player-id action room-id]
   (let [player (models/player-by-id player-id)
-        exit (first (models/exits-by-room room-id))
+        exits (models/exits-by-room room-id)
+        exits-mentioned (core/exits-mentioned action exits)
         monsters (models/monster-by-room room-id)
         ]
     (cond
       (core/monsters-left-to-kill? player monsters) (format "You can't reach the door because there is a %s trying to eat you." (:name (first monsters)))
-      (empty? exit) "There is no door."
-      (= (:locked exit) 1) (locked-exit player action exit)
+      (empty? exits) "There is no door."
+      (empty? exits-mentioned) "I don't know how to do that."
+      (> (count exits-mentioned) 1) "I don't know which door to open."
+      (= (:locked (first exits-mentioned)) 1) (locked-exit player action (first exits-mentioned))
       (using-key? action) "The door is not locked."
-      :else (models/set-player-room player-id (:to_room exit))
+      :else (models/set-player-room player-id (:to_room (first exits-mentioned)))
       )
     )
   )
