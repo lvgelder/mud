@@ -47,6 +47,12 @@
 
   )
 
+(defn open-door [player-id room-id]
+  do
+  (models/set-player-room player-id room-id)
+  "You open the door."
+  )
+
 (defn take-exit [player-id action room-id]
   (let [player (models/player-by-id player-id)
         exits (models/exits-by-room room-id)
@@ -60,7 +66,7 @@
       (> (count exits-mentioned) 1) "I don't know which door to open."
       (= (:locked (first exits-mentioned)) 1) (locked-exit player action (first exits-mentioned))
       (using-key? action) "The door is not locked."
-      :else (models/set-player-room player-id (:to_room (first exits-mentioned)))
+      :else (open-door player-id (:to_room (first exits-mentioned)))
       )
     )
   )

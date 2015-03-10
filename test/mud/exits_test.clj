@@ -49,7 +49,7 @@
       (def player {:id 1})
       (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "door exit" :locked 0})
 
-      (take-exit 1 "take first exit" 1) => irrelevant
+      (take-exit 1 "open door" 1) => "You open the door."
       (provided
         (models/player-by-id 1) => player
         (models/exits-by-room 1) => [exit1]
