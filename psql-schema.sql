@@ -81,6 +81,13 @@ INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 6);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 7);
 INSERT INTO room_treasure(room_id, treasure_id) VALUES (3, 8);
 INSERT INTO monster_treasure(monster_id, treasure_id) VALUES (1, 9);
+INSERT INTO room (id, description) VALUES(4, 'A corridor');
+INSERT INTO room (id, description) VALUES(5, 'A rickety staircase going down into the gloom. There is no handrail.');
+INSERT INTO exit(id, from_room, to_room, description, keywords) VALUES (3, 3, 4, 'A door on the east wall.', 'east');
+INSERT INTO exit(id, from_room, to_room, description, keywords) VALUES (4, 3, 5, 'A door on the west wall.', 'west');
+
+
+
 
 CREATE TABLE player (
   id SERIAL PRIMARY KEY,

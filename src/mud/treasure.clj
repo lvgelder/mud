@@ -6,9 +6,6 @@
 
 (defn list-treasure-in-room [player-id action room-id]
 
-  (defn treasure-item[name]
-    (str "<li>" name "</li>"))
-
   (let [room (models/room-by-id room-id)
         treasure (:treasure room)
         player (models/player-by-id player-id)
@@ -16,19 +13,17 @@
         treasure-left-in-room (core/treasure-left player treasure-not-eaten)
         ]
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
-              (count treasure-left-in-room) (reduce str (map #(treasure-item (:description %)) treasure-left-in-room)))))
+              (count treasure-left-in-room) (core/list-items treasure-left-in-room))))
 
 (defn list-treasure-from-monster [player monsters-mentioned]
-  (defn treasure-item[name]
-    (str "<li>" name "</li>")
-    )
+
   (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
         treasure (:treasure monster)
         treasure-not-eaten (core/treasure-not-eaten player treasure)
         treasure-left (core/treasure-left player treasure-not-eaten)
         ]
     (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
-            (:name (first monsters-mentioned)) (count treasure-left) (reduce str (map #(treasure-item (:description %)) treasure-left)))))
+            (:name (first monsters-mentioned)) (count treasure-left) (core/list-items treasure-left))))
 
 (defn search [player-id action room-id]
   (let [room (models/room-by-id room-id)

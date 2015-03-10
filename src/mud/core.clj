@@ -112,3 +112,10 @@
   (let [username (:current identity)
         auths ((:authentications identity) username)]
     (first (:player auths))))
+
+(defn list-items [items]
+  (defn list-item [name]
+    (str "<li>" name "</li>"))
+
+  (reduce str (map #(list-item (:description %)) items))
+  )

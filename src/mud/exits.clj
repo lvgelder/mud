@@ -10,7 +10,7 @@
         monsters (models/monster-by-room room-id)]
     (if (core/monsters-left-to-kill? player monsters)
       (format "You can't tell if there is a door because there is a %s trying to eat you." (:name (first monsters)))
-      (apply str (concat (format "<p>You see %s exits:</p> " (count exits)) (map #(str (:description %)) exits)))
+     (format "<p>You see %s exits:</p> <ul>%s</ul>" (count exits) (core/list-items exits))
       )
     )
   )
@@ -56,7 +56,7 @@
     (cond
       (core/monsters-left-to-kill? player monsters) (format "You can't reach the door because there is a %s trying to eat you." (:name (first monsters)))
       (empty? exits) "There is no door."
-      (empty? exits-mentioned) "I don't know how to do that."
+      (empty? exits-mentioned) "I don't know which door to open."
       (> (count exits-mentioned) 1) "I don't know which door to open."
       (= (:locked (first exits-mentioned)) 1) (locked-exit player action (first exits-mentioned))
       (using-key? action) "The door is not locked."

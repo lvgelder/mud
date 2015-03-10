@@ -6,7 +6,7 @@
             [mud.brain :refer :all]))
 
 (fact "If a room has one exit, and no monsters list it and its description"
-      (list-exits 1 "exits" 1) => "<p>You see 1 exits:</p> A madeup door"
+      (list-exits 1 "exits" 1) => "<p>You see 1 exits:</p> <ul><li>A madeup door</li></ul>"
       (provided
         (models/player-by-id 1) => {:id 1 :monster []}
         (models/exits-by-room 1) => [{:id 1 :description "A madeup door"}]
@@ -15,7 +15,7 @@
       )
 
 (fact "If a room has no exits, and no monsters list 0 exits"
-      (list-exits 1 "exits" 1) => "<p>You see 0 exits:</p> "
+      (list-exits 1 "exits" 1) => "<p>You see 0 exits:</p> <ul></ul>"
       (provided
         (models/player-by-id 1) => {:id 1 :monster []}
         (models/exits-by-room 1) => []
@@ -62,7 +62,7 @@
       (def player {:id 1})
       (def exit1 {:id 1 :to_room 42 :from_room 1 :keywords "fish" :locked 0})
 
-      (take-exit 1 "open door" 1) => "I don't know how to do that."
+      (take-exit 1 "open door" 1) => "I don't know which door to open."
       (provided
         (models/player-by-id 1) => player
         (models/exits-by-room 1) => [exit1]
@@ -125,7 +125,7 @@
       )
 
 (fact "Take exit doesnt unlock door if not used on correct door"
-      (take-exit 1 "use key" 1) => "I don't know how to do that."
+      (take-exit 1 "use key" 1) => "I don't know which door to open."
       (provided
         (models/player-by-id 1) => {:id 1 :monster [] :treasure [{:id 4 :name "key"}]}
         (models/exits-by-room 1) => [{:id 1 :description "A madeup door" :to_room 42 :from_room 1 :locked 1 :keywords "east"}]
