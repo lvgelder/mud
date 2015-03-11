@@ -113,6 +113,10 @@
         auths ((:authentications identity) username)]
     (first (:player auths))))
 
+(defn get-user-id-from-identity [identity]
+  (:id ((:authentications identity) (:current identity)))
+  )
+
 (defn list-items [items]
   (defn list-item [name]
     (str "<li>" name "</li>"))

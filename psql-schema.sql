@@ -172,5 +172,16 @@ insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (11, 
 insert into combinable_treasure (combined_treasure_id, treasure_id) VALUES (11, 3);
 
 
+CREATE TABLE friend_group (
+  id SERIAL PRIMARY KEY,
+  name TEXT
+);
+
+CREATE TABLE user_friend_group (
+ friend_group_id INTEGER references friend_group(id),
+ mud_user_id INTEGER references mud_user(id)
+ );
+
+
 
 

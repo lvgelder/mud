@@ -18,6 +18,10 @@
                 (views/index))
            (GET "/player/new" req
                 (views/new-player req))
+           (GET "/friend-group/new" req
+                (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                  (GET "/login" [] "Here is our login page.")
+                                  (views/new-friend-group req)))
            (GET "/login" req (views/login req))
            (GET "/logout" []
                 (friend/logout* (response/redirect "/player") ))
@@ -29,6 +33,8 @@
                 (views/player req)))
            (POST "/players" [& params]
                  (views/make-player params))
+           (POST "/friend-group" req
+                 (views/make-friend-group req))
            (POST "/actions" req
                  (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                    (GET "/login" [] "Here is our login page.")

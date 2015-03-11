@@ -51,7 +51,10 @@ Run this command to create tables and import starting data into your new db:
 
 ```
 psql -U YOURUSERNAMEGOESHERE -d mud -a -f psql-schema.sql
+
 ```
+
+psql mud muduser to see whats in your local db
 
 ## Configure profiles.clj with your database information
 
