@@ -21,6 +21,7 @@
     <orderEntry type="library" name="Leiningen: korma:0.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: midje:1.5.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/clojure:1.6.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/core.async:0.1.346.0-17112a-alpha" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.nrepl:0.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: org.postgresql/postgresql:9.2-1002-jdbc4" level="project" />
     <orderEntry type="library" name="Leiningen: org.xerial/sqlite-jdbc:3.7.2" level="project" />
@@ -89,6 +90,10 @@
     <orderEntry type="library" name="Leiningen: org.sonatype.sisu/sisu-inject-bean:2.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: org.sonatype.aether/aether-spi:1.13.1" level="project" />
     <orderEntry type="library" name="Leiningen: joda-time:2.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/tools.analyzer.jvm:0.1.0-beta12" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/core.memoize:0.5.6" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/tools.analyzer:0.1.0-beta12" level="project" />
+    <orderEntry type="library" name="Leiningen: org.ow2.asm/asm-all:4.1" level="project" />
     <orderEntry type="library" name="Leiningen: javax.servlet/servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-anti-forgery:1.0.0" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-headers:0.1.1" level="project" />

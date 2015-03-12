@@ -5,6 +5,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.flash :refer [wrap-flash]]
+            [ring.adapter.jetty-async :refer [run-jetty-async]]
             [ring.util.response :as response]
             [mud.views :as views]
             [mud.models :as models]
@@ -58,4 +59,5 @@
     (wrap-keyword-params app-routes)
     (wrap-params app-routes)))
 
-
+(defn -main []
+  (run-jetty-async app {:join? false :port 8000}))

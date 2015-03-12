@@ -112,7 +112,7 @@
   )
 
 (defn find-by-username [username]
-  (first (select mud_user (with player) (where {:username username})))
+  (first (select mud_user (with player) (with friend_group) (where {:username username})))
   )
 
 (defn add-user-player [user-id player-id]
