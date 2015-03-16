@@ -4,7 +4,8 @@
     [mud.exits :as exits]
     [mud.treasure :as treasure]
     [clojure.string :as str]
-    [mud.core :as core]))
+    [mud.core :as core]
+    [mud.chat :as chat]))
 
 
 ; only one thing to use right now. this will need to get smarter later
@@ -26,6 +27,7 @@
    "open" exits/take-exit "fight" combat/fight-what "use" use-what "try" try-what "unlock" exits/take-exit
    "search" treasure/search "take" treasure/take-what
    "help" core/help
+   "say" chat/say
    "drop" treasure/drop-item "eat" treasure/eat "drink" treasure/drink
    "wear" treasure/wear "combine" treasure/combine-treasure
    }

@@ -20,6 +20,8 @@
     [:head
      (include-css "/css/bootstrap.min.css") ;;(2)
      (include-css "/css/mud.css")
+     (include-js "/js/messages.js")
+     (include-js "/js/jquery-1.11.2.min.js")
      [:title title]]
     [:body
      [:div {:class "navbar navbar-inverse"}
@@ -200,6 +202,8 @@
     [:div (str (format "hit points: %s" (:hit_points pl)))]
 
     [:hr]
+
+    [:div {:class "message"}]
 
     (if action
       [:div
