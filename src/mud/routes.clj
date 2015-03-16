@@ -16,22 +16,26 @@
             [cemerick.friend :as friend]
             [cheshire.core :refer :all]
             (cemerick.friend [workflows :as workflows]
-                             [credentials :as creds])))
+                             [credentials :as creds])
+            [mud.core :as core]))
 
 (def clients (atom {}))
 
 (defn ws
   [req]
+  (let [identity (friend/identity req)
+        player (core/get-player-from-identity identity)]
   (with-channel req con
-                (swap! clients assoc con true)
+                (swap! clients assoc (:id player) con)
                 (println con " connected")
                 (on-close con (fn [status]
                                 (swap! clients dissoc con)
-                                (println con " disconnected. status: " status)))))
+                                (println con " disconnected. status: " status))))))
 
 (future (loop []
-          (doseq [client @clients]
-            (send! (key client) (generate-string
+          (doseq [playerid (keys @clients)]
+            (println playerid)
+            (send! (@clients playerid) (generate-string
                                   {:happiness (rand 10)})
                    false))
           (Thread/sleep 5000)
@@ -40,7 +44,10 @@
 (defroutes app-routes
            (GET "/" []
                 (views/index))
-           (GET "/happiness" [] ws)
+           (GET "/happiness" req
+                (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                                   (GET "/login" [] "Here is our login page.")
+                                                   ws))
            (GET "/player/new" req
                 (views/new-player req))
            (GET "/friend-group/new" req
