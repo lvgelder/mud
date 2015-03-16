@@ -312,5 +312,9 @@
           (where {:player_id player_id :monster_id monster_id}))
   )
 
+(defn find-players-in-room [room-id]
+  (select player (join room_player (= :room_player.player_id :id)) (where {:room_player.room_id room-id}))
+  )
+
 
 

@@ -5,6 +5,7 @@
             [mud.models :as models]
             [mud.brain :as brain]
             [mud.validations :as valid]
+            [mud.chat :as chat]
             [cemerick.friend :as friend]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
@@ -237,10 +238,10 @@
   (let [identity (friend/identity req)
         player (core/get-player-from-identity identity)
         pl (models/player-by-id (:id player))
-        room (models/room-by-player-id (:id player))]
-    (player-page pl room (:flash req))
-    )
-  )
+        room (models/room-by-player-id (:id player))
+        players-in-room (models/find-players-in-room (:id room))
+        other-players (chat/list-players players-in-room (:id player))]
+    (player-page pl room (str (:flash req) other-players))))
 
 (defn action [req]
   (let [identity (friend/identity req)

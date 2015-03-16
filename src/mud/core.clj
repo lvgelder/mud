@@ -121,5 +121,4 @@
   (defn list-item [name]
     (str "<li>" name "</li>"))
 
-  (reduce str (map #(list-item (:description %)) items))
-  )
+  (reduce str (map #(list-item (:description %)) items)))

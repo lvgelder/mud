@@ -24,6 +24,9 @@
 (defn messsage [message player-id]
   (send! (@players player-id) (generate-string {:message message})))
 
+(defn currently-playing [player-id]
+  (contains? @players player-id))
+
 ;(future (loop []
 ;          (doseq [playerid (keys @players)]
 ;            (println playerid)
