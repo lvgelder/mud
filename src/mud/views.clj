@@ -24,8 +24,6 @@
      (include-css "/css/bootstrap.min.css")
      (include-css "/css/mud.css")
      (include-js "/js/jquery-1.11.2.min.js")
-     [:javascript-tag (format "<script>var websocketUrl = '%s';</script>" (env :websocket-url)) ]
-     (include-js "/js/messages.js")
      [:title title]]
     [:body
      [:div {:class "navbar navbar-inverse"}
@@ -178,6 +176,9 @@
 (defn player-page [pl room action]
   (base-page
     (str (:name pl) " - the hero")
+
+    [:javascript-tag (format "<script>var websocketUrl = '%s';</script>" (env :websocket-url)) ]
+    (include-js "/js/messages.js")
 
     [:h1 (:name pl)]
     [:div
