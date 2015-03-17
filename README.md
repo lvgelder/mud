@@ -67,7 +67,9 @@ Add to it:
               :database-username "YOURUSERNAMEGOESHERE"
               :database-password ""
               :database-host "localhost"
-              :database-port "5432"}}}
+              :database-port "5432"
+              :websocket-url "ws://localhost:8080/messages"
+              :cross-domain-url "http://localhost:8080"}}}
 ```
 
 
