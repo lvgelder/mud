@@ -26,12 +26,3 @@
 
 (defn currently-playing [player-id]
   (contains? @players player-id))
-
-;(future (loop []
-;          (doseq [playerid (keys @players)]
-;            (println playerid)
-;            (send! (@players playerid) (generate-string
-;                                  {:message "Bob has taken the scone."})
-;                   false))
-;          (Thread/sleep 5000)
-;          (recur)))
