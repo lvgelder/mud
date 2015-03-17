@@ -33,10 +33,7 @@
   (let [cur-fight-in-progress (models/select_fight_in_progress player-id (:id monster))]
     (if (not-empty cur-fight-in-progress)
       (assoc monster :hit_points (:monster_hit_points (first cur-fight-in-progress)))
-      monster
-      )
-    )
-  )
+      monster)))
 
 (defn update-hit-points [player monster]
   (let [fight-in-progress (models/select_fight_in_progress (:id player) (:id monster))]

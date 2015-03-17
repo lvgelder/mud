@@ -9,11 +9,6 @@
   (fn [s]
     (empty? (models/find-by-username s))))
 
-(defn username-not-taken?
-  []
-  (fn [s]
-    (not-empty (models/find-by-username s))))
-
 (defn hero-name-taken?
   []
   (fn [s]

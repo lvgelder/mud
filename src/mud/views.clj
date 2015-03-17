@@ -55,8 +55,7 @@
       [:div {:class "control-group"}
        [:div {:class "controls"}
         (submit-button {:class "btn btn-primary"} "Login")]]]]
-    [:div (:flash req)]
-    ))
+    [:div (:flash req)]))
 
 (defn new-player [req]
   (base-page
@@ -92,8 +91,7 @@
       [:div {:class "control-group"}
        [:div {:class "controls"}
        (submit-button {:class "btn btn-primary"} "Create Hero")]])
-    [:div (:flash req)]
-    ))
+    [:div (:flash req)]))
 
 (defn new-user [params]
   (models/create-player params)
@@ -105,21 +103,18 @@
     (models/add-user-role (:id usr) 1)
     (models/add-user-player (:id usr) (:id pl))
     )
-  (assoc (response/redirect "/login") :flash "New player created successfully! Please login with your new credentials.")
-  )
+  (assoc (response/redirect "/login") :flash "New player created successfully! Please login with your new credentials."))
 
 (defn make-player [params]
   (let [err (valid/valid-user? params)]
     (if (not(empty? err))
       (assoc (response/redirect "/player/new") :flash (assoc err :form-vals {:username (:username params)
                                                                              :password (:password params) :name (:name params)}))
-      (new-user params)
-      )))
+      (new-user params))))
 
 (defn valid-usernames [usernames]
   (let [username-list (str/split usernames #",")]
-    (map #(models/find-by-username (str/trim %)) username-list)
-    ))
+    (map #(models/find-by-username (str/trim %)) username-list)))
 
 (defn save-new-friend-group [req]
   (let [identity (friend/identity req)
@@ -138,9 +133,7 @@
 
 (defn all-usernames-exist [usernames]
   (let [users (valid-usernames usernames)]
-    (every? identity users)
-    )
-  )
+    (every? identity users)))
 
 (defn make-friend-group [req]
   (let [params (:params req)
@@ -177,8 +170,7 @@
       [:div {:class "control-group"}
        [:div {:class "controls"}
         (submit-button {:class "btn btn-primary"} "Create Friend Group")]])
-    [:div (:flash req)]
-    ))
+    [:div (:flash req)]))
 
 (defn player-page [pl room action]
   (base-page
@@ -229,10 +221,7 @@
       [:div {:class "form-group"}
        (text-field {:class "input-large"} :action)
        [:span {:style "padding: 10px"} (submit-button {:class "btn btn-primary pad-left"} "What do you want to do?")]
-       ]
-      )
-    )
-  )
+       ])))
 
 (defn player [req]
   (let [identity (friend/identity req)

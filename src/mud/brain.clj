@@ -8,14 +8,11 @@
     [mud.chat :as chat]))
 
 
-; only one thing to use right now. this will need to get smarter later
-; exits?
 (defn use-what [player-id user-input room-id]
   (if (exits/using-key? user-input)
     (exits/take-exit player-id user-input room-id)
     "I don't know how to use that."))
 
-; only one thing to try right now. this will need to get smarter later
 (defn try-what [player-id user-input room-id]
   (if (exits/using-key? user-input)
     (exits/take-exit player-id user-input room-id)
@@ -30,8 +27,7 @@
    "say" chat/say
    "drop" treasure/drop-item "eat" treasure/eat "drink" treasure/drink
    "wear" treasure/wear "combine" treasure/combine-treasure
-   }
-  )
+   })
 
 (defn action [player-id user-input room-id]
   (let [user-words (str/split user-input #"\s+")
@@ -39,11 +35,6 @@
     (if verb
       (((verbs) verb) player-id user-input room-id)
       "I don't know how to do that")))
-
-
-
-;run command
-;apply verb noun
 
 
 

@@ -10,10 +10,7 @@
         monsters (models/monster-by-room room-id)]
     (if (core/monsters-left-to-kill? player monsters)
       (format "You can't tell if there is a door because there is a %s trying to eat you." (:name (first monsters)))
-     (format "<p>You see %s exits:</p> <ul>%s</ul>" (count exits) (core/list-items exits))
-      )
-    )
-  )
+     (format "<p>You see %s exits:</p> <ul>%s</ul>" (count exits) (core/list-items exits)))))
 
 (defn using-key? [user-input]
 
@@ -23,10 +20,7 @@
         key-verb (first (filter #(contains? key-verbs %) user-words))]
     (if key-verb
       (core/seq-contains? user-words (key-verbs key-verb))
-      false
-      )
-    )
-  )
+      false)))
 
 (defn locked-exit [player action exit]
   (if (using-key? action)
@@ -37,21 +31,13 @@
           do
           (models/remove-treasure-from-player (:id player) (:id key))
           (models/set-player-room (:id player) (:to_room exit))
-          "You unlock the door and move to the next room."
-          )
-
-        )
-      )
-    "This door is locked. You can't open it."
-    )
-
-  )
+          "You unlock the door and move to the next room.")))
+    "This door is locked. You can't open it."))
 
 (defn open-door [player-id room-id]
   do
   (models/set-player-room player-id room-id)
-  "You open the door."
-  )
+  "You open the door.")
 
 (defn take-exit [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -66,7 +52,4 @@
       (> (count exits-mentioned) 1) "I don't know which door to open."
       (= (:locked (first exits-mentioned)) 1) (locked-exit player action (first exits-mentioned))
       (using-key? action) "The door is not locked."
-      :else (open-door player-id (:to_room (first exits-mentioned)))
-      )
-    )
-  )
+      :else (open-door player-id (:to_room (first exits-mentioned))))))

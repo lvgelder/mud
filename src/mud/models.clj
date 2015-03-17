@@ -1,11 +1,8 @@
 (ns mud.models
-  (:refer-clojure) ;;(1)
+  (:refer-clojure)
   (:use korma.db korma.core)
-  (:require [clojure.string :as string])
   (:require [environ.core :refer [env]]
-            [cemerick.friend.credentials :as creds])
-  )
-
+            [cemerick.friend.credentials :as creds]))
 
 (def database-name
   (env :database-name))
@@ -54,8 +51,7 @@
            (many-to-many room :room_player)
            (many-to-many treasure :player_treasure)
            (many-to-many monster :player_monster)
-           (many-to-many weapon :player_weapon)
-           )
+           (many-to-many weapon :player_weapon))
 
 (defentity mud_role (entity-fields :id :name))
 
@@ -63,8 +59,7 @@
            (entity-fields :id :username :password)
            (many-to-many mud_role :user_role)
            (many-to-many player :user_player)
-           (many-to-many friend_group :user_friend_group)
-           )
+           (many-to-many friend_group :user_friend_group))
 
 (defentity friend_group
            (entity-fields :id :name))
@@ -98,89 +93,62 @@
 
 (defentity combinable_treasure (entity-fields :combined_treasure_id :treasure_id))
 
-(defn all-players []
-  (select player))
-
 (defn create-user [usr]
   (insert mud_user
-          (values {:username (:username usr) :password (creds/hash-bcrypt (:password usr))}))
-  )
+          (values {:username (:username usr) :password (creds/hash-bcrypt (:password usr))})))
 
 (defn add-user-role [user-id role-id]
   (insert user_role
-          (values {:mud_user_id user-id  :mud_role_id role-id}))
-  )
+          (values {:mud_user_id user-id  :mud_role_id role-id})))
 
 (defn find-by-username [username]
-  (first (select mud_user (with player) (where {:username username})))
-  )
+  (first (select mud_user (with player) (where {:username username}))))
 
 (defn add-user-player [user-id player-id]
   (insert user_player
-          (values {:mud_user_id user-id :player_id player-id}))
-  )
-
-(defn create-room [rm]
-  (insert room (values rm))
-  )
+          (values {:mud_user_id user-id :player_id player-id})))
 
 (defn create-player [pl]
   (insert player
-          (values {:name (:name pl) :description "The Hero"}))
-  )
+          (values {:name (:name pl) :description "The Hero"})))
 
 (defn create-friend-group [f]
   (insert friend_group
-          (values {:name (:name f)}))
-  )
+          (values {:name (:name f)})))
 
 (defn add-user-to-friend-group [user-id friend-group-id]
   (insert user_friend_group
-          (values {:mud_user_id user-id :friend_group_id friend-group-id}))
-  )
-
-(defn friend-group-by-user [user-id]
-  (first (select friend_group (where {:mud_user_id user-id})))
-  )
+          (values {:mud_user_id user-id :friend_group_id friend-group-id})))
 
 (defn friend-group-by-name [name]
-  (first (select friend_group (where {:name name})))
-  )
+  (first (select friend_group (where {:name name}))))
 
 (defn initialize-player-room [player_id room_id]
   (insert room_player
-          (values {:room_id room_id :player_id player_id}))
-  )
+          (values {:room_id room_id :player_id player_id})))
 
 (defn initialize-player-weapon [player_id]
   (insert player_weapon
-          (values {:weapon_id 1 :player_id player_id}))
-  )
+          (values {:weapon_id 1 :player_id player_id})))
 
 (defn set-player-room [player_id room_id]
   (update room_player
           (set-fields {:room_id room_id})
-          (where {:player_id player_id}))
-  )
+          (where {:player_id player_id})))
 
 (defn set-hit-points [player_id hit_points]
   (update player
           (set-fields {:hit_points hit_points})
-          (where {:id player_id}))
-  )
+          (where {:id player_id})))
 
 (defn set-max-hit-points [player_id hit_points]
   (update player
           (set-fields {:max_hit_points hit_points})
-          (where {:id player_id}))
-  )
+          (where {:id player_id})))
 
 (defn kill-monster [player_id monster_id]
   (insert player_monster
           (values {:monster_id monster_id :player_id player_id})))
-
-(defn create-exit [ex]
-  (insert exit (values ex)))
 
 (defn room-by-id [id]
   (first (select room (with treasure) (with monster) (where {:id id}))))
@@ -202,15 +170,13 @@
                  (with monster)
                  (join room_player
                        (= :room_player.room_id :id))
-                 (where {:room_player.player_id pl_id})
-                 )))
+                 (where {:room_player.player_id pl_id}))))
 
 (defn monster-by-room [room_id]
   (select monster
                  (join room_monster
                        (= :room_monster.monster_id :id))
-                 (where {:room_monster.room_id room_id})
-                 ))
+                 (where {:room_monster.room_id room_id})))
 
 (defn player-by-name [name]
   (first (select player (where {:name name}))))
@@ -220,24 +186,13 @@
           (where {:from_room room_id})
           (order :id)))
 
-(defn monsters_killed [player_id monster_id]
-  (select player_monster
-          (where {:player_id player_id :monster_id monster_id})
-          ))
-
-(defn treasure_taken [player_id treasure_id]
-  (select player_treasure
-          (where {:player_id player_id :treasure_id treasure_id})
-          ))
-
 (defn collect-treasure [player_id treasure_id]
   (insert player_treasure
           (values {:treasure_id treasure_id :player_id player_id})))
 
 (defn remove-treasure-from-player [player_id treasure_id]
   (delete player_treasure
-          (where {:player_id player_id :treasure_id treasure_id}))
-  )
+          (where {:player_id player_id :treasure_id treasure_id})))
 
 (defn eat-treasure [player_id treasure_id]
   (insert eaten_treasure
@@ -251,23 +206,13 @@
   (select treasure
                  (join eaten_treasure
                        (= :eaten_treasure.treasure_id :id))
-                 (where {:eaten_treasure.player_id pl_id})
-                 ))
+                 (where {:eaten_treasure.player_id pl_id})))
 
 (defn worn-treasure-by-player-id [pl_id]
   (select treasure
           (join worn_treasure
                 (= :worn_treasure.treasure_id :id))
-          (where {:worn_treasure.player_id pl_id})
-          ))
-
-(defn find-player-by-username [user-id]
-  (first (select player
-                 (with treasure) (with monster)
-          (join user_player
-                (= :user_player.player_id :id))
-          (where {:user_player.mud_user_id user-id})
-          )))
+          (where {:worn_treasure.player_id pl_id})))
 
 (defn find-combined-treasure [treasure-id]
   (select treasure
@@ -279,28 +224,23 @@
   (select treasure
                  (join combinable_treasure
                        (= :combinable_treasure.treasure_id :id))
-                 (where {:combinable_treasure.combined_treasure_id (:id (first (find-combined-treasure treasure-id)))})
-                 ))
+                 (where {:combinable_treasure.combined_treasure_id (:id (first (find-combined-treasure treasure-id)))})))
 
 (defn remove-all-treasure-from-player [player_id]
   (delete player_treasure
-          (where {:player_id player_id}))
-  )
+          (where {:player_id player_id})))
 
 (defn remove-all-monsters-from-player [player_id]
   (delete player_monster
-          (where {:player_id player_id}))
-  )
+          (where {:player_id player_id})))
 
 (defn reset-fight-in-progress [player_id]
   (delete fight_in_progress
-          (where {:player_id player_id}))
-  )
+          (where {:player_id player_id})))
 
 (defn select_fight_in_progress [player_id monster_id]
   (select fight_in_progress
-                 (where {:player_id player_id :monster_id monster_id})
-                 ))
+                 (where {:player_id player_id :monster_id monster_id})))
 
 (defn insert_fight_in_progress [player_id monster_id monster_hit_points]
   (insert fight_in_progress
@@ -309,12 +249,10 @@
 (defn update-fight-in-progress [player_id monster_id monster_hit_points]
   (update fight_in_progress
           (set-fields {:monster_hit_points monster_hit_points})
-          (where {:player_id player_id :monster_id monster_id}))
-  )
+          (where {:player_id player_id :monster_id monster_id})))
 
 (defn find-players-in-room [room-id]
-  (select player (join room_player (= :room_player.player_id :id)) (where {:room_player.room_id room-id}))
-  )
+  (select player (join room_player (= :room_player.player_id :id)) (where {:room_player.room_id room-id})))
 
 
 
