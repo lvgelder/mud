@@ -70,7 +70,7 @@
     (wrap-params app-routes))
   reload/wrap-reload
   (wrap-cors
-    :access-control-allow-origin (env :cross-domain-url))))
+    :access-control-allow-origin (re-pattern (env :cross-domain-url)))))
 
 
 (defn -main [& args]
