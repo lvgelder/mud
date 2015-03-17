@@ -1,5 +1,6 @@
 (ns mud.views
   (:require [hiccup.page :refer [html5 include-js include-css]]
+            [hiccup.element :refer [javascript-tag]]
             [hiccup.form :refer [form-to text-field submit-button text-area hidden-field password-field]]
             [ring.util.response :as response]
             [mud.models :as models]
@@ -10,19 +11,21 @@
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
             [mud.core :as core]
+            [environ.core :refer [env]]
             [clojure.string :as str]))
 
 
 (defn index []
   (response/redirect "/player"))
 
-(defn base-page [title & body] ;;(1)
+(defn base-page [title & body]
   (html5
     [:head
-     (include-css "/css/bootstrap.min.css") ;;(2)
+     (include-css "/css/bootstrap.min.css")
      (include-css "/css/mud.css")
-     (include-js "/js/messages.js")
      (include-js "/js/jquery-1.11.2.min.js")
+     [:javascript-tag (format "<script>var websocketUrl = '%s';</script>" (env :websocket-url)) ]
+     (include-js "/js/messages.js")
      [:title title]]
     [:body
      [:div {:class "navbar navbar-inverse"}
@@ -33,7 +36,7 @@
        ]
       ]
 
-     [:div.container (seq body)]])) ;;(3)
+     [:div.container (seq body)]]))
 
 (defn login [req]
   (base-page

@@ -15,6 +15,7 @@
             [compojure.route :as route]
             [cemerick.friend :as friend]
             [cheshire.core :refer :all]
+            [environ.core :refer [env]]
             (cemerick.friend [workflows :as workflows]
                              [credentials :as creds])
             [mud.messages :as messages]))
@@ -69,7 +70,7 @@
     (wrap-params app-routes))
   reload/wrap-reload
   (wrap-cors
-    :access-control-allow-origin #".+")))
+    :access-control-allow-origin (env :cross-domain-url))))
 
 
 (defn -main [& args]
