@@ -54,7 +54,7 @@ psql -U YOURUSERNAMEGOESHERE -d mud -a -f psql-schema.sql
 
 ```
 
-psql mud muduser to see whats in your local db
+psql mud YOURUSERNAMEHERE to see whats in your local db
 
 ## Configure profiles.clj with your database information
 
@@ -77,7 +77,7 @@ First, create the db and import initial values, as above
 
 To start a web server for the application, run:
 
-    lein ring server
+    lein run
 
 ## Tests
 
