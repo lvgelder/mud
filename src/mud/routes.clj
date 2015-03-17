@@ -22,10 +22,6 @@
 (defroutes app-routes
            (GET "/" []
                 (views/index))
-           (GET "/happiness" req
-                (friend/authorize #{::user} "This page can only be seen by authenticated users."
-                                                   (GET "/login" [] "Here is our login page.")
-                                                   messages/ws))
            (GET "/messages" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
