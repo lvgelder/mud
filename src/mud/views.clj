@@ -179,6 +179,9 @@
 
     [:javascript-tag (format "<script>var websocketUrl = '%s';</script>" (env :websocket-url)) ]
     (include-js "/js/messages.js")
+    (include-js "/js/react.min.js")
+    (include-js "/js/JSXTransformer.js")
+    [:javascript-tag "<script type='text/jsx' src='/js/helloreact.js'></script>"]
 
     [:h1 (:name pl)]
     [:div
@@ -199,6 +202,8 @@
     [:div (str (format "hit points: %s" (:hit_points pl)))]
 
     [:hr]
+
+    [:div {:id "example"}]
 
     [:div {:class "message"}
        [:p action]]
