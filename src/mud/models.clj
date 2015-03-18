@@ -179,7 +179,7 @@
                  (where {:room_monster.room_id room_id})))
 
 (defn player-by-name [name]
-  (first (select player (where {:name name}))))
+  (first (select player (with room) (where {:name name}))))
 
 (defn exits-by-room [room_id]
   (select exit

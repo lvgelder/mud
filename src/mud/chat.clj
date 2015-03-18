@@ -19,7 +19,8 @@
             current-player (models/player-by-id player-id)]
         (cond
           (not player-to-talk-to) (format "I don't know who %s is." to-name)
-          (not (messages/currently-playing (:id player-to-talk-to))) (format "%s is not there to talk to." to-name)
+          (not (messages/currently-playing (:id player-to-talk-to))) (format "<p>%s is not there to talk to.</p>" to-name)
+          (not (= room-id (:id (first (:room player-to-talk-to))))) (format "<p>%s is not there to talk to.</p>" to-name)
           :else (send-message message (:id player-to-talk-to) (str/trim to-name) (:name current-player))
           )))))
 
