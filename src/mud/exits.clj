@@ -2,7 +2,9 @@
   (:require
     [mud.models :as models]
     [mud.core :as core]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [mud.messages :as messages]
+    [mud.chat :as chat]))
 
 (defn list-exits [player-id _ room-id]
   (let [player (models/player-by-id player-id)
@@ -31,13 +33,16 @@
           do
           (models/remove-treasure-from-player (:id player) (:id key))
           (models/set-player-room (:id player) (:to_room exit))
+          (chat/join-room player (:to_room exit))
           "You unlock the door and move to the next room.")))
     "This door is locked. You can't open it."))
 
-(defn open-door [player-id room-id]
+(defn open-door [player room-id]
   do
-  (models/set-player-room player-id room-id)
-  "You open the door.")
+  (chat/join-room player room-id)
+    (models/set-player-room (:id player) room-id)
+    "You open the door. ")
+
 
 (defn take-exit [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -52,4 +57,4 @@
       (> (count exits-mentioned) 1) "I don't know which door to open."
       (= (:locked (first exits-mentioned)) 1) (locked-exit player action (first exits-mentioned))
       (using-key? action) "The door is not locked."
-      :else (open-door player-id (:to_room (first exits-mentioned))))))
+      :else (open-door player (:to_room (first exits-mentioned))))))

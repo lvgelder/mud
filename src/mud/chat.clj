@@ -32,3 +32,9 @@
       (if (not-empty currently-playing)
         (format "%s %s in the room with you." (str/join " and " names) join-word)
         "")))
+
+(defn join-room [player room-id]
+  (let [players-in-room (models/find-players-in-room room-id)
+        players-without-me (filter #(not(= (:id %) (:id player))) players-in-room)
+        currently-playing (filter #(messages/currently-playing (:id %)) players-without-me)]
+    (doall (map #(messages/messsage (format "<p>%s has entered the room.</p>" (:name player)) (:id %)) currently-playing))))
