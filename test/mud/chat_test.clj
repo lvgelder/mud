@@ -37,20 +37,20 @@
       (say 1 "say hello" 1) => "I don't know how to do that.")
 
 (fact "say works if user"
-      (say 1 "say hello to bob" 1) => "You said hello to bob."
+      (say 1 "say hello to bob" 1) => "<p>You said hello to bob.</p>"
       (provided
         (models/player-by-id 1) => {:id 1 :name "kate"}
         (models/player-by-name "bob") => {:id 5 :username "bob"}
         (messages/currently-playing 5) => true
-        (messages/messsage "kate says hello" 5) => irrelevant :times 1 ))
+        (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 1 ))
 
 (fact "say works for player name with odd spacing"
-      (say 1 "say hello to   bob the builder " 1) => "You said hello to bob the builder."
+      (say 1 "say hello to   bob the builder " 1) => "<p>You said hello to bob the builder.</p>"
       (provided
         (models/player-by-id 1) => {:id 1 :name "kate"}
         (models/player-by-name "bob the builder") => {:id 5 :username "bob the builder"}
         (messages/currently-playing 5) => true
-        (messages/messsage "kate says hello" 5) => irrelevant :times 1 ))
+        (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 1 ))
 
 (fact "you can't say if player not currently playing."
       (say 1 "say hello to bob" 1) => "bob is not there to talk to."
@@ -58,4 +58,4 @@
         (models/player-by-id 1) => {:id 1 :name "kate"}
         (models/player-by-name "bob") => {:id 5 :username "bob"}
         (messages/currently-playing 5) => false
-        (messages/messsage "kate says hello" 5) => irrelevant :times 0 ))
+        (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 0 ))

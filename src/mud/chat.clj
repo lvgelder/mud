@@ -5,8 +5,8 @@
 
 (defn send-message [message to-player-id message-to message-from]
   do
-  (messages/messsage (format "%s says %s" message-from message) to-player-id)
-  (format "You said %s to %s." message message-to)
+  (messages/messsage (format "<p>%s says %s</p>" message-from message) to-player-id)
+  (format "<p>You said %s to %s.</p>" message message-to)
   )
 
 (defn say [player-id action room-id]

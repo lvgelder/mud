@@ -200,15 +200,10 @@
 
     [:hr]
 
-    [:div {:class "message"}]
+    [:div {:class "message"}
+       [:p action]]
 
-    (if action
-      [:div
-        [:p action]
-        [:hr]
-        ]
-      )
-
+    [:hr]
 
     [:p "You are in:"]
     [:p (:description room)]
@@ -234,7 +229,9 @@
         room (models/room-by-player-id (:id player))
         players-in-room (models/find-players-in-room (:id room))
         other-players (chat/list-players players-in-room (:id player))]
-    (player-page pl room (str (:flash req) other-players))))
+
+    (-> (response/response (player-page pl room (str (:flash req) other-players)))
+        (response/header "X-Clacks-Overhead" "GNU Terry Pratchett"))))
 
 (defn action [req]
   (let [identity (friend/identity req)
