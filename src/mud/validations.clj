@@ -36,7 +36,7 @@
             [:name present? "Group name cannot be blank"]
             [:name (min-length 3) "Group name must be at least three characters long"]
             [:name (group-name-taken?) "Group name has already been taken"]
-            [:usernames present? "You must add at least one other user to your group."]
-            [:usernames (min-length 2) "That seems like an oddly short username."]))
+            [:playernames present? "You must add at least one other hero to your group."]
+            [:playernames (min-length 2) "That seems like an oddly short hero name."]))
 
 

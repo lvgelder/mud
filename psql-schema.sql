@@ -177,9 +177,9 @@ CREATE TABLE friend_group (
   name TEXT
 );
 
-CREATE TABLE user_friend_group (
+CREATE TABLE player_friend_group (
  friend_group_id INTEGER references friend_group(id),
- mud_user_id INTEGER references mud_user(id)
+ player_id INTEGER references player(id)
  );
 
 

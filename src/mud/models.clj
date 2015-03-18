@@ -29,7 +29,7 @@
 (defentity treasure
            (entity-fields :id :name :description :type :action_description :hit_points))
 
-(declare player room monster user_role friend_group user_friend_group)
+(declare player room monster user_role friend_group player_friend_group)
 
 (defentity weapon
            (entity-fields :id :name :damage))
@@ -51,21 +51,21 @@
            (many-to-many room :room_player)
            (many-to-many treasure :player_treasure)
            (many-to-many monster :player_monster)
-           (many-to-many weapon :player_weapon))
+           (many-to-many weapon :player_weapon)
+           (many-to-many friend_group :player_friend_group))
 
 (defentity mud_role (entity-fields :id :name))
 
 (defentity mud_user
            (entity-fields :id :username :password)
            (many-to-many mud_role :user_role)
-           (many-to-many player :user_player)
-           (many-to-many friend_group :user_friend_group))
+           (many-to-many player :user_player))
 
 (defentity friend_group
            (entity-fields :id :name))
 
-(defentity user_friend_group
-           (entity-fields :friend_group_id :mud_user_id))
+(defentity player_friend_group
+           (entity-fields :friend_group_id :player_id))
 
 (defentity user_player (entity-fields :mud_user_id :player_id))
 
@@ -116,9 +116,9 @@
   (insert friend_group
           (values {:name (:name f)})))
 
-(defn add-user-to-friend-group [user-id friend-group-id]
-  (insert user_friend_group
-          (values {:mud_user_id user-id :friend_group_id friend-group-id})))
+(defn add-player-to-friend-group [player-id friend-group-id]
+  (insert player_friend_group
+          (values {:player_id player-id :friend_group_id friend-group-id})))
 
 (defn friend-group-by-name [name]
   (first (select friend_group (where {:name name}))))

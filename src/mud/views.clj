@@ -113,36 +113,36 @@
                                                                              :password (:password params) :name (:name params)}))
       (new-user params))))
 
-(defn valid-usernames [usernames]
-  (let [username-list (str/split usernames #",")]
-    (map #(models/find-by-username (str/trim %)) username-list)))
+(defn valid-playernames [playernames]
+  (let [player-list (str/split playernames #",")]
+    (map #(models/player-by-name (str/trim %)) player-list)))
 
 (defn save-new-friend-group [req]
   (let [identity (friend/identity req)
-        current-user-id (core/get-user-id-from-identity identity)
+        current-player (core/get-player-from-identity identity)
         params (:params req)
-        other-users (valid-usernames (:usernames params))
+        other-players (valid-playernames (:playernames params))
         fr (models/create-friend-group params)
         friend-group (models/friend-group-by-name (:name params))]
-    (models/add-user-to-friend-group current-user-id (:id friend-group))
-    (doall (for [user other-users]  (models/add-user-to-friend-group (:id user)(:id friend-group))))
+    (models/add-player-to-friend-group (:id current-player) (:id friend-group))
+    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(:id friend-group))))
     (response/redirect "/player")))
 
 
 ;split into comma separated
 ;also allow people to add and remove from group, so have group listing and editing page
 
-(defn all-usernames-exist [usernames]
-  (let [users (valid-usernames usernames)]
-    (every? identity users)))
+(defn all-playernames-exist [playernames]
+  (let [players (valid-playernames playernames)]
+    (every? identity players)))
 
 (defn make-friend-group [req]
   (let [params (:params req)
         err (valid/valid-friend-group? params)]
     (if (not(empty? err))
-      (assoc (response/redirect "/friend-group/new") :flash (assoc err :form-vals {:usernames (:usernames params) :name (:name params)}))
-      (if-not (all-usernames-exist (:usernames params))
-        (assoc (response/redirect "/friend-group/new") :flash { :usernames ["Username does not exist"] :form-vals {:usernames (:usernames params) :name (:name params)}} )
+      (assoc (response/redirect "/friend-group/new") :flash (assoc err :form-vals {:playernames (:playernames params) :name (:name params)}))
+      (if-not (all-playernames-exist (:playernames params))
+        (assoc (response/redirect "/friend-group/new") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
         (save-new-friend-group req)))))
 
 (defn new-friend-group [req]
@@ -161,11 +161,11 @@
            [:div {:class "text-error"} error ]
            )]]]
       [:div {:class "control-group"}
-       [:label {:class "control-label"} "Username(s) to add to your group. This can be a comma-separated list. eg 'buffy,boffy'. Note that you will be added automatically, you do not need to add your own username."]
+       [:label {:class "control-label"} "Heroes to add to your group. This can be a comma-separated list. eg 'buffy,boffy'. Note that you will be added automatically, you do not need to add your own hero name."]
        [:div {:class "controls"}
-        (text-field :usernames (:usernames (:form-vals (:flash req))))
+        (text-field :playernames (:playernames (:form-vals (:flash req))))
         [:div
-         (for [error (:usernames (:flash req))]
+         (for [error (:playernames (:flash req))]
            [:div {:class "text-error"} error ]
            )]]]
       [:div {:class "control-group"}
