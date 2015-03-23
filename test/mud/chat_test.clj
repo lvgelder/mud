@@ -48,34 +48,35 @@
 (fact "say doesnt work if you don't say who to say to"
       (say 1 "say hello" 1) => "I don't know how to do that.")
 
-(fact "say works if other user exists, is playing and is in the same room."
+(fact "say works if other user exists and is in present friend group"
+      (def player {:id 1 :name "kate"})
+      (def friend {:id 5 :username "bob"})
+
       (say 1 "say hello to bob" 1) => "<p>You said hello to bob.</p>"
       (provided
-        (models/player-by-id 1) => {:id 1 :name "kate"}
-        (models/player-by-name "bob") => {:id 5 :username "bob" :room [{:id 1 :description "A room"}]}
-        (messages/currently-playing 5) => true
+        (models/player-by-id 1) => player
+        (models/player-by-name "bob") => friend
+        (present-players-in-friend-group player 1) => [friend]
         (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 1 ))
 
 (fact "say works for player name with odd spacing"
+      (def player {:id 1 :name "kate"})
+      (def friend {:id 5 :username "bob"})
+
       (say 1 "say hello to   bob the builder " 1) => "<p>You said hello to bob the builder.</p>"
       (provided
-        (models/player-by-id 1) => {:id 1 :name "kate"}
-        (models/player-by-name "bob the builder") => {:id 5 :username "bob the builder" :room [{:id 1 :description "A room"}]}
-        (messages/currently-playing 5) => true
+        (models/player-by-id 1) => player
+        (models/player-by-name "bob the builder") => friend
+        (present-players-in-friend-group player 1) => [friend]
         (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 1 ))
 
-(fact "you can't say if player not currently playing."
-      (say 1 "say hello to bob" 1) => "<p>bob is not there to talk to.</p>"
-      (provided
-        (models/player-by-id 1) => {:id 1 :name "kate"}
-        (models/player-by-name "bob") => {:id 5 :username "bob" :room [{:id 1 :description "A room"}]}
-        (messages/currently-playing 5) => false
-        (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 0 ))
+(fact "you can't say if player is not in your friend group"
+      (def player {:id 1 :name "kate"})
+      (def friend {:id 5 :username "bob"})
 
-(fact "you can't say if player not in same room as you."
       (say 1 "say hello to bob" 1) => "<p>bob is not there to talk to.</p>"
       (provided
-        (models/player-by-id 1) => {:id 1 :name "kate"}
-        (models/player-by-name "bob") => {:id 5 :username "bob" :room [{:id 8 :description "A room"}]}
-        (messages/currently-playing 5) => true
+        (models/player-by-id 1) => player
+        (models/player-by-name "bob") => friend
+        (present-players-in-friend-group player 1) => []
         (messages/messsage "<p>kate says hello</p>" 5) => irrelevant :times 0 ))

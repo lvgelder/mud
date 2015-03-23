@@ -227,7 +227,7 @@
         player (core/get-player-from-identity identity)
         pl (models/player-by-id (:id player))
         room (models/room-by-player-id (:id player))
-        other-players (chat/list-players pl room-id)]
+        other-players (chat/list-players pl (:id room))]
     (-> (response/response (player-page pl room (str (:flash req) other-players)))
         (response/header "X-Clacks-Overhead" "GNU Terry Pratchett"))))
 
