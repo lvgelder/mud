@@ -228,8 +228,7 @@
         pl (models/player-by-id (:id player))
         room (models/room-by-player-id (:id player))
         players-in-room (models/find-players-in-room (:id room))
-        other-players (chat/list-players players-in-room (:id player))]
-
+        other-players (chat/list-players players-in-room pl)]
     (-> (response/response (player-page pl room (str (:flash req) other-players)))
         (response/header "X-Clacks-Overhead" "GNU Terry Pratchett"))))
 

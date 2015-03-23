@@ -123,6 +123,12 @@
 (defn friend-group-by-name [name]
   (first (select friend_group (where {:name name}))))
 
+(defn players-by-friend-group [friend_group_id]
+  (select player
+          (join player_friend_group
+                (= :player_friend_group.player_id :id))
+          (where {:player_friend_group.friend_group_id friend_group_id})))
+
 (defn initialize-player-room [player_id room_id]
   (insert room_player
           (values {:room_id room_id :player_id player_id})))
@@ -154,7 +160,7 @@
   (first (select room (with treasure) (with monster) (where {:id id}))))
 
 (defn player-by-id [id]
-  (first (select player (with treasure) (with monster) (where {:id id}))))
+  (first (select player (with treasure) (with monster) (with friend_group) (where {:id id}))))
 
 (defn player-with-weapon [id]
   (first (select player (with weapon) (where {:id id}))))

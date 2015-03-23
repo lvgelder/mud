@@ -1,7 +1,8 @@
 (ns mud.chat
   (:require [mud.messages :as messages]
             [clojure.string :as str]
-            [mud.models :as models]))
+            [mud.models :as models]
+            [mud.core :as core]))
 
 (defn send-message [message to-player-id message-to message-from]
   do
@@ -24,12 +25,14 @@
           :else (send-message message (:id player-to-talk-to) (str/trim to-name) (:name current-player))
           )))))
 
-(defn list-players [players player-id]
-    (let [players-without-me (filter #(not(= (:id %) player-id)) players)
+(defn list-players [players player]
+    (let [players-without-me (filter #(not(= (:id %) (:id player))) players)
           currently-playing (filter #(messages/currently-playing (:id %)) players-without-me)
-          names (map #(:name %) currently-playing)
-          join-word (if (> (count currently-playing) 1) "are" "is")]
-      (if (not-empty currently-playing)
+          players-in-friend-group (models/players-by-friend-group (:id (first (:friend_group player))))
+          currently-playing-friends (filter #(core/contains-item-with-id currently-playing %) players-in-friend-group)
+          names (map #(:name %) currently-playing-friends)
+          join-word (if (> (count currently-playing-friends) 1) "are" "is")]
+      (if (not-empty currently-playing-friends)
         (format "%s %s in the room with you." (str/join " and " names) join-word)
         "")))
 
