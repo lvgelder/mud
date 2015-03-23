@@ -5,15 +5,20 @@
             [mud.models :as models]
             [mud.messages :as messages]))
 
-(fact "list nobody if no players"
-      (list-players [] {:id 1}) => "")
+(fact "list nobody if player is not in a friend group"
+      (def player {:id 1})
+
+      (list-players player 1) => ""
+      (provided
+        (present-players-in-friend-group player 1) => [] ))
 
 (fact "list bob if he is currently playing and in your friend group"
       (def pl1 {:name "bob" :id 5})
       (def current-player {:id 1 :name "sue" :friend_group [{:id 1}]})
 
-      (list-players [pl1] current-player) => "bob is in the room with you."
+      (present-players-in-friend-group current-player 1) => [pl1]
       (provided
+        (models/find-players-in-room 1) => [pl1]
         (messages/currently-playing 5) => true
       (models/players-by-friend-group 1) => [pl1]))
 
@@ -21,18 +26,18 @@
       (def pl1 {:name "bob" :id 5})
       (def current-player {:id 1 :name "sue" :friend_group [{:id 1}]})
 
-      (list-players [pl1] current-player) => ""
+      (present-players-in-friend-group current-player 1) => []
       (provided
+        (models/find-players-in-room 1) => [pl1]
         (messages/currently-playing 5) => false
         (models/players-by-friend-group 1) => [pl1]))
 
 (fact "dont list current player as being in the room"
       (def currPlayer {:name "me" :id 1 :friend_group [{:id 1}]})
       (def pl1 {:name "bob" :id 5})
-      (list-players [pl1 currPlayer] currPlayer) => "bob is in the room with you."
+      (list-players currPlayer 1) => "bob is in the room with you."
       (provided
-        (messages/currently-playing 5) => true
-        (models/players-by-friend-group 1) => [pl1]))
+        (present-players-in-friend-group currPlayer 1) => [pl1]))
 
 (fact "say doesnt work if player name unknown"
       (say 1 "say hello to bob" 1) => "I don't know who bob is."

@@ -25,11 +25,17 @@
           :else (send-message message (:id player-to-talk-to) (str/trim to-name) (:name current-player))
           )))))
 
-(defn list-players [players player]
-    (let [players-without-me (filter #(not(= (:id %) (:id player))) players)
+(defn present-players-in-friend-group [player room-id]
+  (if-not (:friend_group player)
+    []
+    (let [players-in-room (models/find-players-in-room room-id)
+          players-without-me (filter #(not(= (:id %) (:id player))) players-in-room)
           currently-playing (filter #(messages/currently-playing (:id %)) players-without-me)
-          players-in-friend-group (models/players-by-friend-group (:id (first (:friend_group player))))
-          currently-playing-friends (filter #(core/contains-item-with-id currently-playing %) players-in-friend-group)
+          players-in-friend-group (models/players-by-friend-group (:id (first (:friend_group player))))]
+      (filter #(core/contains-item-with-id currently-playing %) players-in-friend-group))))
+
+(defn list-players [player room-id]
+  (let [currently-playing-friends (present-players-in-friend-group player room-id)
           names (map #(:name %) currently-playing-friends)
           join-word (if (> (count currently-playing-friends) 1) "are" "is")]
       (if (not-empty currently-playing-friends)
@@ -37,7 +43,6 @@
         "")))
 
 (defn join-room [player room-id]
-  (let [players-in-room (models/find-players-in-room room-id)
-        players-without-me (filter #(not(= (:id %) (:id player))) players-in-room)
-        currently-playing (filter #(messages/currently-playing (:id %)) players-without-me)]
+  (let [currently-playing (present-players-in-friend-group player room-id)]
     (doall (map #(messages/messsage (format "<p>%s has entered the room.</p>" (:name player)) (:id %)) currently-playing))))
+
