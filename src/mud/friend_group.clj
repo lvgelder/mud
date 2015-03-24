@@ -9,9 +9,14 @@
     [clojure.string :as str]
     [mud.views :as views]))
 
-(defn valid-playernames [playernames]
-  (let [player-list (str/split playernames #",")]
-    (map #(models/player-by-name (str/trim %)) player-list)))
+(defn friend-group [req]
+  (let [identity (friend/identity req)
+        pl (core/get-player-from-identity identity)
+        player (models/player-by-id (:id pl))
+        friend-group-id (:id (first (:friend_group player)))]
+    (if-not friend-group-id
+      (views/new-friend-group req)
+      (views/edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)})))))
 
 (defn save-new-friend-group [req]
   (let [identity (friend/identity req)
@@ -24,11 +29,10 @@
     (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(:id friend-group))))
     (response/redirect "/player")))
 
-(defn save-updated-friend-group [req]
-  (let [params (:params req)
-        other-players (valid-playernames (:playernames params))]
-    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(read-string (:friend_group_id params)))))
-    (response/redirect "/friend-group")))
+(defn valid-playernames [playernames]
+  (let [player-list (str/split playernames #",")]
+    (map #(models/player-by-name (str/trim %)) player-list)))
+
 
 (defn all-playernames-exist [playernames]
   (let [players (valid-playernames playernames)]
@@ -43,23 +47,6 @@
         (assoc (response/redirect "/friend-group/new") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
         (save-new-friend-group req)))))
 
-
-(defn update-friend-group [req]
-  (let [params (:params req)]
-    (if-not (all-playernames-exist (:playernames params))
-      (assoc (response/redirect "/friend-group") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
-      (save-updated-friend-group req))))
-
-(defn friend-group [req]
-  (let [identity (friend/identity req)
-        pl (core/get-player-from-identity identity)
-        player (models/player-by-id (:id pl))
-        friend-group-id (:id (first (:friend_group player)))]
-    (if-not friend-group-id
-      (views/new-friend-group req)
-      (views/edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)})))))
-
-; check player is part of this friend group before allowing this action
 (defn remove-player-from-friend-group [req]
   (let [params (:params req)
         friend_group_id (read-string (:friend_group_id params))
@@ -72,3 +59,15 @@
       ( do
         (models/remove-player-from-friend-group player_id friend_group_id)
         (response/redirect "/friend-group")))))
+
+(defn add-players-to-friend-group [req]
+  (let [params (:params req)
+        other-players (valid-playernames (:playernames params))]
+    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(read-string (:friend_group_id params)))))
+    (response/redirect "/friend-group")))
+
+(defn update-friend-group [req]
+  (let [params (:params req)]
+    (if-not (all-playernames-exist (:playernames params))
+      (assoc (response/redirect "/friend-group") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
+      (add-players-to-friend-group req))))
