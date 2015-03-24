@@ -24,7 +24,7 @@
        [:div {:class "navbar-right"}
         [:a {:class "brand" :href "/logout"} "logout"]]
        [:div
-        [:a {:class "brand" :href "/friend-group"} "friend group"]]
+        [:a {:class "brand" :href "/friend-group"} "multi-player"]]
        ]
       ]
 
@@ -34,10 +34,8 @@
   (base-page
     "Welcome to Sud (a single user dungeon)"
     [:div.row.admin-bar
-     [:a {:href "/player/single/new"}
-      "Single Player!"]
-     [:a {:href "/player/multi/new"}
-      "Multi-player!"]]
+     [:a {:href "/player/new"}
+      "Create new hero"]]
     [:div
      [:legend "Login"]
      [:form {:method "POST" :action "login" :class "form-horizontal"}
@@ -93,10 +91,13 @@
 (defn new-friend-group [req]
   (base-page
     "New Friend Group"
+
     (form-to
       {:class "form"}
       [:post "/friend-group"]
       [:legend "Create a friend group"]
+      [:div {:style "padding-bottom: 10px"} "Choose friends to play with! People in your friend-group will see when you enter the room. You will compete for the same treasure and kill vampires together."]
+
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your group"]
        [:div {:class "controls"}
