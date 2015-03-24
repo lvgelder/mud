@@ -28,9 +28,11 @@
     [:body
      [:div {:class "navbar navbar-inverse"}
       [:div {:class :navbar-inner}
-       [:div [:a {:class :brand :href "/player"} "SUD!"]]
+       [:div [:a {:class :brand :href "/player"} "Play!"]]
        [:div {:class "navbar-right"}
         [:a {:class "brand" :href "/logout"} "logout"]]
+       [:div
+        [:a {:class "brand" :href "/friend-group"} "friend group"]]
        ]
       ]
 
@@ -214,14 +216,13 @@
      "Heroes to remove from your friend group"
      (for [player (models/players-by-friend-group (:id (:friend_group (:flash req))))]
        [:div
-        [:span {:style "padding-right: 10px"} (:name player)]
-
+        (:name player)
         (form-to
           {:class "form"}
           [:post "/friend-group/remove-player"]
           (hidden-field :player_id (:id player))
           (hidden-field :friend_group_id (:id (:friend_group (:flash req))))
-          (submit-button {:class "btn btn-primary"} "Remove")
+          (submit-button {:class "btn btn-primary btn-xs"} "Remove")
           )
         ]
        )
