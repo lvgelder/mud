@@ -11,6 +11,9 @@
             [ring.middleware.reload :as reload]
             [ring.util.response :as response]
             [mud.views :as views]
+            [mud.friend_group :as friend_group]
+            [mud.game :as game]
+            [mud.user :as mud_user]
             [mud.models :as models]
             [compojure.route :as route]
             [cemerick.friend :as friend]
@@ -32,16 +35,16 @@
            (GET "/friend-group" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
-                                  (views/friend-group req)))
+                                  (friend_group/friend-group req)))
            (POST "/friend-group/remove-player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
-                                  (views/remove-player-from-friend-group req)))
+                                  (friend_group/remove-player-from-friend-group req)))
 
            (POST "/friend-group/update" req
                  (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                    (GET "/login" [] "Here is our login page.")
-                                   (views/update-friend-group req)))
+                                   (friend_group/update-friend-group req)))
            (GET "/friend-group/new" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
@@ -54,15 +57,15 @@
            (GET "/player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                 (GET "/login" [] "Here is our login page.")
-                (views/player req)))
+                (game/player req)))
            (POST "/players" [& params]
-                 (views/make-player params))
+                 (mud_user/make-player params))
            (POST "/friend-group" req
-                 (views/make-friend-group req))
+                 (friend_group/make-friend-group req))
            (POST "/actions" req
                  (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                    (GET "/login" [] "Here is our login page.")
-                                   (views/action req)))
+                                   (game/action req)))
            (route/resources "/")
            (route/not-found "<h1>Page not found</h1>"))
 
