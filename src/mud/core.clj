@@ -93,3 +93,7 @@
     (str "<li>" name "</li>"))
 
   (reduce str (map #(list-item (:description %)) items)))
+
+(defn list-hero-names [friend-group-id]
+  (let [players (models/players-by-friend-group friend-group-id)]
+    (str/join ", " (map #(:name %) players))))

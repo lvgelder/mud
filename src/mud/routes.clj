@@ -29,6 +29,19 @@
                                   messages/ws))
            (GET "/player/new" req
                 (views/new-player req))
+           (GET "/friend-group" req
+                (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                  (GET "/login" [] "Here is our login page.")
+                                  (views/friend-group req)))
+           (POST "/friend-group/remove-player" req
+                (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                  (GET "/login" [] "Here is our login page.")
+                                  (views/remove-player-from-friend-group req)))
+
+           (POST "/friend-group/update" req
+                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                   (GET "/login" [] "Here is our login page.")
+                                   (views/update-friend-group req)))
            (GET "/friend-group/new" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")

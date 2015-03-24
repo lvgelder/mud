@@ -130,3 +130,8 @@
       (def exit2 {:id 2 :to_room 43 :from_room 1 :keywords "puppy" :locked 0})
 
       (exits-mentioned "open door" [exit1 exit2]) => [exit1])
+
+(fact "list hero names"
+      (list-hero-names 1) => "buffy, kate"
+      (provided
+        (models/players-by-friend-group 1) => [{:id 1 :name "buffy"} {:id 2 :name "kate"}]))

@@ -128,6 +128,12 @@
     (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(:id friend-group))))
     (response/redirect "/player")))
 
+(defn save-updated-friend-group [req]
+  (let [params (:params req)
+        other-players (valid-playernames (:playernames params))]
+    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(read-string (:friend_group_id params)))))
+    (response/redirect "/friend-group")))
+
 
 ;split into comma separated
 ;also allow people to add and remove from group, so have group listing and editing page
@@ -144,6 +150,13 @@
       (if-not (all-playernames-exist (:playernames params))
         (assoc (response/redirect "/friend-group/new") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
         (save-new-friend-group req)))))
+
+
+(defn update-friend-group [req]
+  (let [params (:params req)]
+      (if-not (all-playernames-exist (:playernames params))
+        (assoc (response/redirect "/friend-group") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
+        (save-updated-friend-group req))))
 
 (defn new-friend-group [req]
   (base-page
@@ -172,6 +185,48 @@
        [:div {:class "controls"}
         (submit-button {:class "btn btn-primary"} "Create Friend Group")]])
     [:div (:flash req)]))
+
+(defn edit-friend-group [req]
+  (base-page
+    "Edit Friend Group"
+    (form-to
+      {:class "form"}
+      [:post "/friend-group/update"]
+      [:legend "Edit friend group"]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Name of your group"]
+       [:div {:class "controls"}
+        (:name (:friend_group (:flash req)))]]
+      [:div {:class "control-group"}
+       [:label {:class "control-label"} "Heroes to add to your group. This can be a comma-separated list. eg 'buffy,boffy'. Note that you will be added automatically, you do not need to add your own hero name."]
+       [:div {:class "controls"}
+        (text-field :playernames (:playernames (:form-vals :flash req)))
+        [:div
+         (for [error (:playernames (:flash req))]
+           [:div {:class "text-error"} error ]
+           )]]]
+      [:div {:class "control-group"}
+       [:div {:class "controls"}
+        (hidden-field :friend_group_id (:id (:friend_group (:flash req))))
+        (submit-button {:class "btn btn-primary"} "Update Friend Group")]])
+
+    [:div {:class "control-group"}
+     "Heroes to remove from your friend group"
+     (for [player (models/players-by-friend-group (:id (:friend_group (:flash req))))]
+       [:div
+        [:span {:style "padding-right: 10px"} (:name player)]
+
+        (form-to
+          {:class "form"}
+          [:post "/friend-group/remove-player"]
+          (hidden-field :player_id (:id player))
+          (hidden-field :friend_group_id (:id (:friend_group (:flash req))))
+          (submit-button {:class "btn btn-primary"} "Remove")
+          )
+        ]
+       )
+     ]
+    ))
 
 (defn player-page [pl room action]
   (base-page
@@ -222,6 +277,15 @@
        [:span {:style "padding: 10px"} (submit-button {:class "btn btn-primary pad-left"} "What do you want to do?")]
        ])))
 
+(defn friend-group [req]
+  (let [identity (friend/identity req)
+        pl (core/get-player-from-identity identity)
+        player (models/player-by-id (:id pl))
+        friend-group-id (:id (first (:friend_group player)))]
+  (if-not friend-group-id
+    (new-friend-group req)
+    (edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)})))))
+
 (defn player [req]
   (let [identity (friend/identity req)
         player (core/get-player-from-identity identity)
@@ -237,4 +301,18 @@
         room (models/room-by-player-id (:id player))
         action (brain/action (:id player) (:action (:params req)) (:id room))]
     (assoc (response/redirect "/player") :flash action)))
+
+; check player is part of this friend group before allowing this action
+(defn remove-player-from-friend-group [req]
+  (let [params (:params req)
+        friend_group_id (read-string (:friend_group_id params))
+        player_id (read-string (:player_id params))
+        identity (friend/identity req)
+        player (core/get-player-from-identity identity)
+        players-in-friend-group (models/players-by-friend-group friend_group_id)]
+    (if-not (core/contains-item-with-id players-in-friend-group player)
+      (assoc (response/redirect "/friend-group") :flash "Action not permitted.")
+      ( do
+        (models/remove-player-from-friend-group player_id friend_group_id)
+        (response/redirect "/friend-group")))))
 

@@ -116,12 +116,24 @@
   (insert friend_group
           (values {:name (:name f)})))
 
+(defn update-friend-group [friend-group-id name]
+  (update friend_group
+          (set-fields {:name name})
+          (where {:id friend-group-id})))
+
 (defn add-player-to-friend-group [player-id friend-group-id]
   (insert player_friend_group
           (values {:player_id player-id :friend_group_id friend-group-id})))
 
+(defn remove-player-from-friend-group [player-id friend-group-id]
+  (delete player_friend_group
+          (where {:player_id player-id :friend_group_id friend-group-id})))
+
 (defn friend-group-by-name [name]
   (first (select friend_group (where {:name name}))))
+
+(defn friend-group-by-id [id]
+  (first (select friend_group (where {:id id}))))
 
 (defn players-by-friend-group [friend_group_id]
   (select player
