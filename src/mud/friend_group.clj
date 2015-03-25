@@ -18,6 +18,14 @@
       (views/new-friend-group req)
       (views/edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)})))))
 
+(defn valid-playernames [playernames]
+  (let [player-list (str/split playernames #",")]
+    (map #(models/player-by-name (str/trim %)) player-list)))
+
+(defn all-playernames-exist [playernames]
+  (let [players (valid-playernames playernames)]
+    (every? identity players)))
+
 (defn save-new-friend-group [req]
   (let [identity (friend/identity req)
         current-player (core/get-player-from-identity identity)
@@ -29,14 +37,6 @@
     (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(:id friend-group))))
     (response/redirect "/player")))
 
-(defn valid-playernames [playernames]
-  (let [player-list (str/split playernames #",")]
-    (map #(models/player-by-name (str/trim %)) player-list)))
-
-
-(defn all-playernames-exist [playernames]
-  (let [players (valid-playernames playernames)]
-    (every? identity players)))
 
 (defn make-friend-group [req]
   (let [params (:params req)
