@@ -10,7 +10,8 @@
         treasure (:treasure room)
         player (models/player-by-id player-id)
         treasure-not-eaten (core/treasure-not-eaten player treasure)
-        treasure-left-in-room (core/treasure-left player treasure-not-eaten)
+        treasure-not-taken-by-player (core/treasure-not-taken-by-player player treasure-not-eaten)
+        treasure-left-in-room (core/treasure-not-taken-by-friend-group player treasure-not-taken-by-player)
         ]
       (format "<p>You see %s items in this room.</p> <ul>%s</ul>"
               (count treasure-left-in-room) (core/list-items treasure-left-in-room))))
@@ -20,7 +21,8 @@
   (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
         treasure (:treasure monster)
         treasure-not-eaten (core/treasure-not-eaten player treasure)
-        treasure-left (core/treasure-left player treasure-not-eaten)
+        treasure-not-taken-by-player (core/treasure-not-taken-by-player player treasure-not-eaten)
+        treasure-left (core/treasure-not-taken-by-friend-group player treasure-not-taken-by-player)
         ]
     (format "<p>You search the %s and find %s items.</p> <ul>%s</ul>"
             (:name (first monsters-mentioned)) (count treasure-left) (core/list-items treasure-left))))

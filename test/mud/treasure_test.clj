@@ -70,6 +70,16 @@
         )
       )
 
+(fact "Searching the vampire should not list treasure taken from friend group"
+      (def treasure [{:id 1 :description "A cup of coffee"}{:id 2 :description "A cookie"}{:id 3 :description "cupcake"}])
+      (def player {:id 1 :treasure [] :friend_group [{:id 1}]})
+
+      (list-treasure-from-monster player [{:id 42 :name "vampire"}]) => "<p>You search the vampire and find 2 items.</p> <ul><li>A cup of coffee</li><li>A cookie</li></ul>"
+      (provided
+        (models/monster-by-id 42) => {:id 42 :name "vampire" :treasure treasure}
+        (models/friend-group-by-id 1) => {:id 1 :treasure [{:id 3 :description "cupcake"}]}))
+
+
 (fact "Searching the vampire should 0 items if it has no treasure."
       (def player {:id 1 :treasure []})
 
@@ -132,6 +142,16 @@
         (models/eaten-treasure-by-player-id 1) => [{:id 56 :name "cupcake"}]
         )
       )
+
+(fact "List all the treasure in the room that your friend group doesn't already have"
+      (list-treasure-in-room 1 "" 1) => "<p>You see 1 items in this room.</p> <ul><li>A shiny key</li></ul>"
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room"
+                                  :monster []
+                                  :treasure [{:id 43 :description "A shiny key"}{:id 44 :description "A newspaper"}{:id 56 :name "cupcake"}]}
+        (models/player-by-id 1) => {:id 1 :treasure [{:id 44 :description "A newspaper"}] :monster [] :friend_group [{:id 1}]}
+        (models/eaten-treasure-by-player-id 1) => []
+        (models/friend-group-by-id 1) => {:id 1 :treasure [{:id 56 :name "cupcake"}]}))
 
 (fact "Can take key if ask for it"
       (def player {:id 1 :treasure [] :monster []})

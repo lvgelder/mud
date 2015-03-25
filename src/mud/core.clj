@@ -28,12 +28,18 @@
 (defn not-already-taken-treasure [player treasure]
   (not (already-taken-treasure? player treasure) ))
 
-(defn treasure-left [player treasure]
+(defn treasure-not-taken-by-player [player treasure]
   (filter #(not-already-taken-treasure player %) treasure))
 
 (defn treasure-not-eaten [player treasure]
   (let [treasure-eaten (models/eaten-treasure-by-player-id (:id player))]
     (filter #(not-contains-item-with-id treasure-eaten %) treasure)))
+
+(defn treasure-not-taken-by-friend-group [player treasure]
+  (if-not (:friend_group player)
+    treasure
+  (let [friend-group (models/friend-group-by-id (:id (first (:friend_group player))))]
+    (filter #(not-contains-item-with-id (:treasure friend-group) %) treasure))))
 
 (defn help [player-id action room-id]
   "Try looking around. Try searching. If there is a monster, try fighting it. If there is a door, try opening it.")

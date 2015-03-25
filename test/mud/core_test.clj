@@ -135,3 +135,25 @@
       (list-hero-names 1) => "buffy, kate"
       (provided
         (models/players-by-friend-group 1) => [{:id 1 :name "buffy"} {:id 2 :name "kate"}]))
+
+(fact "treasure not taken by friend group returns treasure if not taken"
+      (def player {:id 1 :name "bob" :treasure [] :friend_group [{:id 1}]})
+      (def treasure [{:id 1 :name "fish"}])
+
+      (treasure-not-taken-by-friend-group player treasure) => treasure
+      (provided
+        (models/friend-group-by-id 1) => {:id 1 :treasure []}))
+
+(fact "treasure not taken by friend group returns nothing if treasure taken"
+      (def player {:id 1 :name "bob" :treasure [] :friend_group [{:id 1}]})
+      (def treasure [{:id 1 :name "fish"}])
+
+      (treasure-not-taken-by-friend-group player treasure) => []
+      (provided
+        (models/friend-group-by-id 1) => {:id 1 :treasure treasure}))
+
+(fact "treasure not taken by friend group returns treasure if no friend group"
+      (def player {:id 1 :name "bob" :treasure [] :friend_group []})
+      (def treasure [{:id 1 :name "fish"}])
+
+      (treasure-not-taken-by-friend-group player treasure) => treasure)
