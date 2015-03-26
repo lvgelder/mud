@@ -36,10 +36,24 @@
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
                                   (friend_group/friend-group req)))
+           (GET "/friend-group/invites" req
+                (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                  (GET "/login" [] "Here is our login page.")
+                                  (friend_group/see-friend-group-invites req)))
            (POST "/friend-group/remove-player" req
                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
                                   (GET "/login" [] "Here is our login page.")
                                   (friend_group/remove-player-from-friend-group req)))
+
+           (POST "/friend-group/accept-invite" req
+                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                   (GET "/login" [] "Here is our login page.")
+                                   (friend_group/accept-invite req)))
+
+           (POST "/friend-group/reject-invite" req
+                 (friend/authorize #{::user} "This page can only be seen by authenticated users."
+                                   (GET "/login" [] "Here is our login page.")
+                                   (friend_group/reject-invite req)))
 
            (POST "/friend-group/update" req
                  (friend/authorize #{::user} "This page can only be seen by authenticated users."

@@ -186,7 +186,10 @@ CREATE TABLE player_friend_group (
    treasure_id INTEGER REFERENCES treasure(id),
    friend_group_id INTEGER REFERENCES friend_group(id));
 
-
+ CREATE TABLE friend_group_notifications (
+   player_id INTEGER REFERENCES player(id),
+   inviter_id INTEGER REFERENCES player(id),
+   friend_group_id INTEGER REFERENCES friend_group(id));
 
 
 

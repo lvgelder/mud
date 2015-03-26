@@ -25,9 +25,8 @@
         [:a {:class "brand" :href "/logout"} "logout"]]
        [:div
         [:a {:class "brand" :href "/friend-group"} "multi-player"]]
-       ]
-      ]
-
+       [:div
+        [:a {:class "brand" :href "/friend-group/invites"} "invites"]]]]
      [:div.container (seq body)]]))
 
 (defn login [req]
@@ -208,4 +207,32 @@
        (text-field {:class "input-large"} :action)
        [:span {:style "padding: 10px"} (submit-button {:class "btn btn-primary pad-left"} "What do you want to do?")]
        ])))
+
+
+(defn friend-group-invites [invites]
+  (base-page
+    "Welcome to Sud (a single user dungeon)"
+    [:div
+     (if (empty? invites)
+       [:p "You have no current invites."]
+       )
+
+     (for [invite invites]
+       [:p
+        (str (format "You have been invited to join the group %s" (:name invite)))
+         (form-to
+           [:post "/friend-group/accept-invite"]
+           (hidden-field :friend_group_id (:id invite))
+           (submit-button {:class "btn btn-primary btn-xs"} "Accept")
+           )
+        (form-to
+          [:post "/friend-group/reject-invite"]
+          (hidden-field :friend_group_id (:id invite))
+          (submit-button {:class "btn btn-primary btn-xs"} "Reject")
+          )
+
+        ])
+     ]
+    ))
+
 

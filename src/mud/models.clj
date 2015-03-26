@@ -96,6 +96,8 @@
 
 (defentity friend_group_treasure (entity-fields :friend_group_id :treasure_id))
 
+(defentity friend_group_notifications (entity-fields :friend_group_id :player_id :inviter_id))
+
 (defn create-user [usr]
   (insert mud_user
           (values {:username (:username usr) :password (creds/hash-bcrypt (:password usr))})))
@@ -131,6 +133,20 @@
 (defn remove-player-from-friend-group [player-id friend-group-id]
   (delete player_friend_group
           (where {:player_id player-id :friend_group_id friend-group-id})))
+
+(defn add-invite-to-friend-group [player-id inviter-id friend-group-id]
+  (insert friend_group_notifications
+          (values {:player_id player-id :inviter_id inviter-id :friend_group_id friend-group-id})))
+
+(defn remove-invite-to-friend-group [player-id friend-group-id]
+  (delete friend_group_notifications
+          (where {:player_id player-id :friend_group_id friend-group-id})))
+
+(defn find_friend_group_notifications [player-id]
+  (select friend_group
+          (join friend_group_notifications
+                (= :friend_group_notifications.friend_group_id :id))
+          (where {:friend_group_notifications.player_id player-id})))
 
 (defn friend-group-by-name [name]
   (first (select friend_group (where {:name name}))))

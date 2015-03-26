@@ -34,7 +34,7 @@
         fr (models/create-friend-group params)
         friend-group (models/friend-group-by-name (:name params))]
     (models/add-player-to-friend-group (:id current-player) (:id friend-group))
-    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(:id friend-group))))
+    (doall (for [player other-players]  (models/add-invite-to-friend-group (:id player) (:id current-player) (:id friend-group))))
     (response/redirect "/player")))
 
 
@@ -61,9 +61,11 @@
         (response/redirect "/friend-group")))))
 
 (defn add-players-to-friend-group [req]
-  (let [params (:params req)
+  (let [identity (friend/identity req)
+        current-player (core/get-player-from-identity identity)
+        params (:params req)
         other-players (valid-playernames (:playernames params))]
-    (doall (for [player other-players]  (models/add-player-to-friend-group (:id player)(read-string (:friend_group_id params)))))
+    (doall (for [player other-players]  (models/add-invite-to-friend-group (:id player) (:id current-player) (read-string (:friend_group_id params)))))
     (response/redirect "/friend-group")))
 
 (defn update-friend-group [req]
@@ -71,3 +73,26 @@
     (if-not (all-playernames-exist (:playernames params))
       (assoc (response/redirect "/friend-group") :flash { :playernames ["Hero does not exist"] :form-vals {:playernames (:playernames params) :name (:name params)}} )
       (add-players-to-friend-group req))))
+
+(defn see-friend-group-invites [req]
+  (let [identity (friend/identity req)
+        current-player (core/get-player-from-identity identity)
+        invites (models/find_friend_group_notifications (:id current-player))]
+    (views/friend-group-invites invites)))
+
+(defn accept-invite [req]
+  (let [params (:params req)
+        identity (friend/identity req)
+        current-player (core/get-player-from-identity identity)
+        friend_group_id (read-string (:friend_group_id params))]
+    (models/add-player-to-friend-group (:id current-player) friend_group_id)
+    (models/remove-invite-to-friend-group (:id current-player) friend_group_id)
+    (response/redirect "/player")))
+
+(defn reject-invite [req]
+  (let [params (:params req)
+        identity (friend/identity req)
+        current-player (core/get-player-from-identity identity)
+        friend_group_id (read-string (:friend_group_id params))]
+    (models/remove-invite-to-friend-group (:id current-player) friend_group_id)
+    (response/redirect "/player")))
