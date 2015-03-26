@@ -11,7 +11,7 @@
   )
 
 (defn present-players-in-friend-group [player room-id]
-  (if-not (:friend_group player)
+  (if (empty? (:friend_group player))
     []
     (let [players-in-room (models/find-players-in-room room-id)
           players-without-me (filter #(not(= (:id %) (:id player))) players-in-room)
