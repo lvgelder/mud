@@ -95,7 +95,7 @@
       {:class "form"}
       [:post "/friend-group"]
       [:legend "Create a friend group"]
-      [:div {:style "padding-bottom: 10px"} "Choose friends to play with! People in your friend-group will see when you enter the room. You will compete for the same treasure and kill vampires together."]
+      [:div {:style "padding: 10px"} "Choose friends to play with! People in your friend-group will see when you enter the room. You will compete for the same treasure and kill vampires together."]
 
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your group"]
@@ -126,6 +126,7 @@
       [:post "/friend-group/update"]
       [:legend "Edit friend group"]
       [:div {:class "text-error"} (:message (:flash req))]
+      [:div {:style "padding-bottom: 10px"}]
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your group"]
        [:div {:class "controls"}
@@ -213,28 +214,31 @@
 (defn friend-group-invites [invites]
   (base-page
     "Welcome to Sud (a single user dungeon)"
-    [:p "You can only be in one friend-group. If you accept one of these invites you will leave your current friend-group."]
+    (if (not-empty invites)
+      [:p "You can only be in one friend-group. If you accept one of these invites you will leave your current friend-group."]
+      )
     [:div
      (if (empty? invites)
        [:p "You have no current invites."]
        )
 
      (for [invite invites]
-       [:p
-        (str (format "You have been invited to join the group %s" (:name invite)))
+       [:div
+        [:dif (str (format "You have been invited to join the group %s" (:name invite))) ]
+        [:div {:class "pad-top"}
+        [:span {:class "pull-left pad-right"}
          (form-to
            [:post "/friend-group/accept-invite"]
            (hidden-field :friend_group_id (:id invite))
            (submit-button {:class "btn btn-primary btn-xs"} "Accept")
            )
+         ]
+       [:span
         (form-to
           [:post "/friend-group/reject-invite"]
           (hidden-field :friend_group_id (:id invite))
           (submit-button {:class "btn btn-primary btn-xs"} "Reject")
-          )
-
-        ])
-     ]
-    ))
+          )]]]
+       )]))
 
 
