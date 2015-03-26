@@ -2,7 +2,8 @@
   (:require
     [mud.models :as models]
     [mud.core :as core]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [mud.chat :as chat]))
 
 (defn list-treasure-in-room [player-id action room-id]
 
@@ -46,7 +47,7 @@
 (defn has-five-items-or-more[player]
   (>= (count (:treasure player)) 5))
 
-(defn take-item [player treasure-to-take]
+(defn take-item [player room-id treasure-to-take]
   (cond
     (empty? treasure-to-take) "You can't take that."
     (core/already-taken-treasure? player treasure-to-take) "You already have that."
@@ -54,6 +55,10 @@
     :else (
             do
             (models/collect-treasure (:id player) (:id treasure-to-take))
+            (if (:friend_group player)
+              (do
+              (models/collect-treasure-for-friend-group (:id (first (:friend_group player))) (:id treasure-to-take))
+              (chat/notify-taken-treasure player room-id treasure-to-take)))
             (str (format "You have the %s." (:name treasure-to-take))))))
 
 (defn take-item-from-room [player-id action room-id]
@@ -61,12 +66,12 @@
         treasure (:treasure room)
         treasure-to-take (first (core/treasure-mentioned action treasure))
         player (models/player-by-id player-id)]
-    (take-item player treasure-to-take)))
+    (take-item player room-id treasure-to-take)))
 
-(defn take-item-from-monster [player action monsters-mentioned]
+(defn take-item-from-monster [player action room-id monsters-mentioned]
   (let [monster (models/monster-by-id (:id (first monsters-mentioned)))
         treasure-to-take (first (core/treasure-mentioned action (:treasure monster)))]
-    (take-item player treasure-to-take)))
+    (take-item player room-id treasure-to-take)))
 
 (defn drop-item [player-id action room-id]
   (let [player (models/player-by-id player-id)
@@ -87,7 +92,7 @@
       (not (empty? unkilled-monsters)) (format "You can't take that because the %s tries to eat you." (:name (first unkilled-monsters)))
       (and (empty? monsters-mentioned) (core/used-from-but-not-for-room? action)) "You can't take that."
       (or (empty? monsters-mentioned) (core/asked-from-room? action)) (take-item-from-room player-id action room-id)
-      (not (empty? monsters-mentioned)) (take-item-from-monster player action monsters-mentioned))))
+      (not (empty? monsters-mentioned)) (take-item-from-monster player action room-id monsters-mentioned))))
 
 (defn restore-hit-points [player treasure]
   (if (< (:hit_points player) (:max_hit_points player))

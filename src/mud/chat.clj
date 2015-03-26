@@ -31,6 +31,10 @@
   (let [currently-playing (present-players-in-friend-group player room-id)]
     (doall (map #(messages/messsage (format "<p>%s has entered the room.</p>" (:name player)) (:id %)) currently-playing))))
 
+(defn notify-taken-treasure [player room-id treasure]
+  (let [currently-playing (present-players-in-friend-group player room-id)]
+    (doall (map #(messages/messsage (format "<p>%s has taken the %s.</p>" (:name player) (:name treasure)) (:id %)) currently-playing))))
+
 (defn say [player-id action room-id]
   (let [message-parts (re-find #"say (.*) to (.*)" action)
         message (nth message-parts 1)

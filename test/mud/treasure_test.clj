@@ -4,7 +4,8 @@
             [mud.models :as models]
             [mud.treasure :refer :all]
             [mud.brain :refer :all]
-            [mud.core :as core]))
+            [mud.core :as core]
+            [mud.chat :as chat]))
 
 (fact "Can't search if there is an unkilled monster in the room"
       (search 1 "search" 1) => "You try to search but the vampire tries to eat you..."
@@ -165,6 +166,18 @@
         )
       )
 
+(fact "If you have a friend group, mark treasure as taken"
+      (def player {:id 1 :treasure [] :monster [] :friend_group [{:id 1}]})
+      (def treasure {:id 43 :name "key" :description "A shiny key"})
+      (take-item-from-room 1 "take key" 1) => "You have the key."
+      (provided
+        (models/room-by-id 1) => {:id 1 :description "A room" :monster []
+                                  :treasure [treasure]}
+        (models/player-by-id 1) => player
+        (models/collect-treasure 1 43) => irrelevant :times 1
+        (models/collect-treasure-for-friend-group 1 43) => irrelevant :times 1
+        (chat/notify-taken-treasure player 1 treasure) => irrelevant :times 1))
+
 
 (fact "Can't take something if there is no treasure"
       (take-item-from-room 1 "take key" 1) => "You can't take that."
@@ -263,7 +276,7 @@
       (provided
         (models/player-by-id 1) => player
         (models/room-by-id 1) => {:id 1 :monster monsters}
-        (take-item-from-monster player "take key from vampire" monsters) => irrelevant :times 1
+        (take-item-from-monster player "take key from vampire" 1 monsters) => irrelevant :times 1
         )
       )
 
@@ -271,7 +284,7 @@
       (def player {:id 1})
       (def monsters-mentioned [{:id 48 :name "vampire"}])
 
-      (take-item-from-monster player "take key from vampire" monsters-mentioned) => "You can't take that."
+      (take-item-from-monster player "take key from vampire" 1 monsters-mentioned) => "You can't take that."
       (provided
         (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure []}))
 
@@ -279,7 +292,7 @@
       (def player {:id 1 :treasure []})
       (def monsters-mentioned [{:id 48 :name "vampire"}])
 
-      (take-item-from-monster player "take cupcake from vampire" monsters-mentioned) => "You have the cupcake."
+      (take-item-from-monster player "take cupcake from vampire" 1 monsters-mentioned) => "You have the cupcake."
       (provided
         (models/monster-by-id 48) => {:id 1 :name "vampire" :treasure [{:id 3 :name "cupcake"}]}
         (models/collect-treasure 1 3) => irrelevant :times 1))

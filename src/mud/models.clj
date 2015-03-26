@@ -144,6 +144,10 @@
                 (= :player_friend_group.player_id :id))
           (where {:player_friend_group.friend_group_id friend_group_id})))
 
+(defn collect-treasure-for-friend-group [friend_group_id treasure_id]
+  (insert friend_group_treasure
+          (values {:treasure_id treasure_id :friend_group_id friend_group_id})))
+
 (defn initialize-player-room [player_id room_id]
   (insert room_player
           (values {:room_id room_id :player_id player_id})))
