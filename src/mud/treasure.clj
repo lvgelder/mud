@@ -49,10 +49,10 @@
 
 (defn take-item [player room-id treasure-to-take]
   (cond
-    (empty? treasure-to-take) "You can't take that."
-    (core/already-taken-treasure? player treasure-to-take) "You already have that."
-    (core/treasure-taken-by-friend-group? player treasure-to-take) "Someone in your group already has that."
-    (has-five-items-or-more player) "You already have 5 items. You need to drop something."
+    (empty? treasure-to-take) "<p>You can't take that.</p>"
+    (core/already-taken-treasure? player treasure-to-take) "<p>You already have that.</p>"
+    (core/treasure-taken-by-friend-group? player treasure-to-take) "<p>Someone in your group already has that.</p>"
+    (has-five-items-or-more player) "<p>You already have 5 items. You need to drop something.</p>"
     :else (
             do
             (models/collect-treasure (:id player) (:id treasure-to-take))
@@ -60,7 +60,7 @@
               (do
               (models/collect-treasure-for-friend-group (:id (first (:friend_group player))) (:id treasure-to-take))
               (chat/notify-taken-treasure player room-id treasure-to-take)))
-            (str (format "You have the %s." (:name treasure-to-take))))))
+            (str (format "<p>You have the %s.</p>" (:name treasure-to-take))))))
 
 (defn take-item-from-room [player-id action room-id]
   (let [room (models/room-by-id room-id)
@@ -79,10 +79,10 @@
         treasure (:treasure player)
         droppable-treasure (core/treasure-mentioned action treasure)]
     (if (empty? droppable-treasure)
-      "You don't have that."
+      "<p>You don't have that.</p>"
       (do
         (models/remove-treasure-from-player (:id player) (:id (first droppable-treasure)))
-        (str (format "You put the %s down." (:name (first droppable-treasure))))))))
+        (str (format "<p>You put the %s down.</p>" (:name (first droppable-treasure))))))))
 
 (defn take-what [player-id action room-id]
   (let [player (models/player-by-id player-id)
