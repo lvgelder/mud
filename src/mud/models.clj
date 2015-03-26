@@ -134,6 +134,10 @@
   (delete player_friend_group
           (where {:player_id player-id :friend_group_id friend-group-id})))
 
+(defn remove-player-from-all-friend-groups [player-id]
+  (delete player_friend_group
+          (where {:player_id player-id})))
+
 (defn add-invite-to-friend-group [player-id inviter-id friend-group-id]
   (insert friend_group_notifications
           (values {:player_id player-id :inviter_id inviter-id :friend_group_id friend-group-id})))
@@ -147,6 +151,13 @@
           (join friend_group_notifications
                 (= :friend_group_notifications.friend_group_id :id))
           (where {:friend_group_notifications.player_id player-id})))
+
+
+(defn find_friend_group_notifications-already-sent [player-id friend-group-id]
+  (select friend_group
+          (join friend_group_notifications
+                (= :friend_group_notifications.friend_group_id :id))
+          (where {:friend_group_notifications.player_id player-id :friend_group_notifications.friend_group_id friend-group-id })))
 
 (defn friend-group-by-name [name]
   (first (select friend_group (where {:name name}))))

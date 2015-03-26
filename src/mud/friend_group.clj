@@ -16,7 +16,9 @@
         friend-group-id (:id (first (:friend_group player)))]
     (if-not friend-group-id
       (views/new-friend-group req)
-      (views/edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)})))))
+      (views/edit-friend-group (assoc req :flash {:friend_group (models/friend-group-by-id friend-group-id)
+                                                  :message (:flash req)
+                                                  :playernames (:playernames (:flash req))})))))
 
 (defn valid-playernames [playernames]
   (let [player-list (str/split playernames #",")]
@@ -26,6 +28,12 @@
   (let [players (valid-playernames playernames)]
     (every? identity players)))
 
+(defn invite-player-to-friend-group [current-player-id friend-group-id player-to-invite-id]
+  (let [invitation-sent (models/find_friend_group_notifications-already-sent player-to-invite-id friend-group-id)]
+    (if (empty? invitation-sent)
+      (models/add-invite-to-friend-group player-to-invite-id current-player-id friend-group-id)
+      )))
+
 (defn save-new-friend-group [req]
   (let [identity (friend/identity req)
         current-player (core/get-player-from-identity identity)
@@ -34,7 +42,7 @@
         fr (models/create-friend-group params)
         friend-group (models/friend-group-by-name (:name params))]
     (models/add-player-to-friend-group (:id current-player) (:id friend-group))
-    (doall (for [player other-players]  (models/add-invite-to-friend-group (:id player) (:id current-player) (:id friend-group))))
+    (doall (for [player other-players]  (invite-player-to-friend-group (:id current-player) (:id friend-group) (:id player))))
     (response/redirect "/player")))
 
 
@@ -65,8 +73,9 @@
         current-player (core/get-player-from-identity identity)
         params (:params req)
         other-players (valid-playernames (:playernames params))]
-    (doall (for [player other-players]  (models/add-invite-to-friend-group (:id player) (:id current-player) (read-string (:friend_group_id params)))))
-    (response/redirect "/friend-group")))
+    (doall (for [player other-players]
+             (invite-player-to-friend-group (:id current-player) (read-string (:friend_group_id params)) (:id player))))
+    (assoc (response/redirect "/friend-group") :flash "Invite sent")))
 
 (defn update-friend-group [req]
   (let [params (:params req)]
@@ -85,6 +94,7 @@
         identity (friend/identity req)
         current-player (core/get-player-from-identity identity)
         friend_group_id (read-string (:friend_group_id params))]
+    (models/remove-player-from-all-friend-groups (:id current-player))
     (models/add-player-to-friend-group (:id current-player) friend_group_id)
     (models/remove-invite-to-friend-group (:id current-player) friend_group_id)
     (response/redirect "/player")))

@@ -125,6 +125,7 @@
       {:class "form"}
       [:post "/friend-group/update"]
       [:legend "Edit friend group"]
+      [:div {:class "text-error"} (:message (:flash req))]
       [:div {:class "control-group"}
        [:label {:class "control-label"} "Name of your group"]
        [:div {:class "controls"}
@@ -212,6 +213,7 @@
 (defn friend-group-invites [invites]
   (base-page
     "Welcome to Sud (a single user dungeon)"
+    [:p "You can only be in one friend-group. If you accept one of these invites you will leave your current friend-group."]
     [:div
      (if (empty? invites)
        [:p "You have no current invites."]
