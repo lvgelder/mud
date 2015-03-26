@@ -41,6 +41,12 @@
   (let [friend-group (models/friend-group-by-id (:id (first (:friend_group player))))]
     (filter #(not-contains-item-with-id (:treasure friend-group) %) treasure))))
 
+(defn treasure-taken-by-friend-group? [player treasure]
+  (if-not (:friend_group player)
+    nil
+    (let [friend-group (models/friend-group-by-id (:id (first (:friend_group player))))]
+      (contains-item-with-id (:treasure friend-group) treasure))))
+
 (defn help [player-id action room-id]
   "Try looking around. Try searching. If there is a monster, try fighting it. If there is a door, try opening it.")
 

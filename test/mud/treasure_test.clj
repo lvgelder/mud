@@ -174,6 +174,7 @@
         (models/room-by-id 1) => {:id 1 :description "A room" :monster []
                                   :treasure [treasure]}
         (models/player-by-id 1) => player
+        (models/friend-group-by-id 1) => {:id 1 :treasure []}
         (models/collect-treasure 1 43) => irrelevant :times 1
         (models/collect-treasure-for-friend-group 1 43) => irrelevant :times 1
         (chat/notify-taken-treasure player 1 treasure) => irrelevant :times 1))

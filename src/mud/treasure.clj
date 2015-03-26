@@ -51,6 +51,7 @@
   (cond
     (empty? treasure-to-take) "You can't take that."
     (core/already-taken-treasure? player treasure-to-take) "You already have that."
+    (core/treasure-taken-by-friend-group? player treasure-to-take) "Someone in your group already has that."
     (has-five-items-or-more player) "You already have 5 items. You need to drop something."
     :else (
             do
